@@ -29,6 +29,7 @@ interface Track {
 
 export default function Centerblock() {
   const [tracks, setTracks] = useState<Track[]>([])
+  const [filter, setFilter] = useState<number>(0)
 
   useEffect(() => {
     async function requestInApi() {
@@ -43,6 +44,26 @@ export default function Centerblock() {
 
     requestInApi();
   }, [])
+
+  const filteredAuthors: string[] = tracks
+  .map(track => track.author)
+  .filter((value, index, self) => {
+    return self.indexOf(value) === index;
+  });
+
+  const filteredGenres: string[] = tracks
+  .map(track => track.genre)
+  .filter((value, index, self) => {
+    return self.indexOf(value) === index;
+  });
+
+  function selectFilter(filterNumber: number) {
+    if (filter !== filterNumber) {
+      setFilter(filterNumber)
+    } else if (filter === filterNumber) {
+      setFilter(0)
+    }
+  } 
 
   return (
     <div className={styles.background}>
@@ -60,14 +81,58 @@ export default function Centerblock() {
       <h2 className={styles.heading}>Треки</h2>
       <div className={styles.filter}>
         <div className={styles.filterTitle}>Искать по:</div>
-        <div className={classNames(styles.filterBtn, styles.btnText)}>
-          исполнителю
+        <div className={styles.filterBtnBox}>
+          <button className={classNames(styles.filterBtn, styles.btnText)} onClick={() => selectFilter(1)}>
+            исполнителю
+          </button>
+          <div className={styles.filterSelections} style={{ display: filter === 1 ? 'flex' : 'none' }}>
+            {
+              filteredAuthors.map(author => (
+                <div key={author}>
+                <input type="checkbox" name="author-select" id={author} className={styles.selectInput} />
+                <label htmlFor={author} className={styles.selectLabel}>
+                  {author}
+                </label>
+                </div>
+              ))
+            }
+          </div>
         </div>
-        <div className={classNames(styles.filterBtn, styles.btnText)}>
-          году выпуска
+        <div className={styles.filterBtnBox}>
+          <button className={classNames(styles.filterBtn, styles.btnText)} onClick={() => selectFilter(2)}>
+            году выпуска
+          </button>
+          <div className={styles.filterSelectionYear} style={{ display: filter === 2 ? 'flex' : 'none' }}>
+            <input type="checkbox" name="year-select" id="defaultYearSelect" className={styles.selectInput}/>
+            <label htmlFor="defaultYearSelect" className={styles.selectLabel}>
+              По умолчанию
+            </label>
+            <input type="checkbox" name="year-select" id="newYearSelect" className={styles.selectInput}/>
+            <label htmlFor="newYearSelect" className={styles.selectLabel}>
+              Сначало новые
+            </label>
+            <input type="checkbox" name="year-select" id="oldYearSelect" className={styles.selectInput}/>
+            <label htmlFor="oldYearSelect" className={styles.selectLabel}>
+              Сначало старые
+            </label>
+          </div>
         </div>
-        <div className={classNames(styles.filterBtn, styles.btnText)}>
-          жанру
+        <div className={styles.filterBtnBox}>
+          <button className={classNames(styles.filterBtn, styles.btnText)} onClick={() => selectFilter(3)}>
+            жанру
+          </button>
+          <div className={styles.filterSelections} style={{ display: filter === 3 ? 'flex' : 'none' }}>
+            {
+              filteredGenres.map(genre => (
+                <div key={genre}>
+                <input type="checkbox" name="author-select" id={genre} className={styles.selectInput} />
+                <label htmlFor={genre} className={styles.selectLabel}>
+                  {genre}
+                </label>
+                </div>
+              ))
+            }
+          </div>
         </div>
       </div>
       <div className={styles.content}>
