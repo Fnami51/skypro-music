@@ -15,7 +15,6 @@
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    width: 447px;
 }
 
 .title{
@@ -29,7 +28,7 @@
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    width: 447px;
+    /* width: 447px; */
 }
 
 .picture{
@@ -73,7 +72,7 @@
 }
 
 .author{
-    width: 321px;
+    /*width: 321px;*/
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -89,10 +88,6 @@
     line-height: 24px;
     color: #ffffff;
     text-align: left;
-}
-
-.album{
-    width: 245px; 
 }
 
 .albumLink{
@@ -118,4 +113,21 @@
     line-height: 24px;
     text-align: right;
     color: #696969;
+}
+
+.column1 {
+    width: 447px;
+}
+  
+.column2 {
+    width: 321px;
+}
+  
+.column3 {
+    width: 245px;
+}
+  
+.column4 {
+    width: 60px;
+    text-align: end;
 }

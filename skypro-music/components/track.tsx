@@ -1,5 +1,6 @@
 import Image from "next/image"
 import styles from "./style_components/track.module.css"
+import classNames from "classnames";
 
 interface User {
   id: number;
@@ -31,7 +32,7 @@ export default function Track({ id, name, author, release_date, genre, duration_
     return (
         <div className={styles.background}>
             <div className={styles.track}>
-                <div className={styles.title}>
+                <div className={classNames(styles.title, styles.column1)}>
                     <div className={styles.picture}>
                         <svg className={styles.titleSvg}>
                             <use xlinkHref="img/icon/sprite.svg#icon-note"></use>
@@ -41,13 +42,13 @@ export default function Track({ id, name, author, release_date, genre, duration_
                         <a className={styles.titleLink} href={track_file}>{name} <span className={styles.titleSpan}></span></a>
                     </div>
                 </div>
-                <div className={styles.author}>
+                <div className={classNames(styles.author, styles.column2)}>
                     <a className={styles.authorLink} href="http://">{author}</a>
                 </div>
-                <div className={styles.album}>
+                <div className={styles.column3}>
                     <a className={styles.albumLink} href="http://">{genre}</a>
                 </div>
-                <div>
+                <div className={styles.column4}>
                     <svg className={styles.timeSvg}>
                         <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
                     </svg>
