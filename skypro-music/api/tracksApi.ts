@@ -18,8 +18,8 @@ interface User {
     started_user: User[];
   }
 
-export async function getTracks(token: string): Promise<Track[]>{
-    const key = await fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
+export async function getTracks(/*token: string*/): Promise<Track[]>{
+    /*const key = await fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
         method: "POST",
         body: JSON.stringify({
             refresh: token,
@@ -36,13 +36,13 @@ export async function getTracks(token: string): Promise<Track[]>{
         };
     }).then((data) => {
         return data.access
-    });
+    });*/
 
     const result = await fetch('https://skypro-music-api.skyeng.tech/catalog/track/all/', {
         method: "GET",
-        headers: {
+        /*headers: {
             Authorization: `Bearer ${key}`,
-        }
+        }*/
     });
     if (!result.ok) {
         console.error('Error Api', result.status);

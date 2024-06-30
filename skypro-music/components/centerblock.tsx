@@ -33,9 +33,9 @@ export default function Centerblock() {
 
   useEffect(() => {
     async function requestInApi() {
-      const token: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxOTU3NDU4NywiaWF0IjoxNzE5NDg4MTg3LCJqdGkiOiI0M2JiNTNmZWViZmI0NGQwOWRmMzM3YWFiNzUzYjMxNyIsInVzZXJfaWQiOjQxMDJ9.XORoN0mHybvru7KwGzb5mBrl6IVtFlzDaYe7byys4T0";
+      // сonst token: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxOTU3NDU4NywiaWF0IjoxNzE5NDg4MTg3LCJqdGkiOiI0M2JiNTNmZWViZmI0NGQwOWRmMzM3YWFiNzUzYjMxNyIsInVzZXJfaWQiOjQxMDJ9.XORoN0mHybvru7KwGzb5mBrl6IVtFlzDaYe7byys4T0";
       
-      const answerFromApi: Track[] = await getTracks(token);
+      const answerFromApi: Track[] = await getTracks(/*token*/);
 
       console.log(answerFromApi)
 
@@ -81,7 +81,7 @@ export default function Centerblock() {
       <h2 className={styles.heading}>Треки</h2>
       <div className={styles.filter}>
         <div className={styles.filterTitle}>Искать по:</div>
-        <div className={styles.filterBtnBox}>
+        <div>
           <button className={classNames(styles.filterBtn, styles.btnText)} onClick={() => selectFilter(1)}>
             исполнителю
           </button>
@@ -98,7 +98,7 @@ export default function Centerblock() {
             }
           </div>
         </div>
-        <div className={styles.filterBtnBox}>
+        <div>
           <button className={classNames(styles.filterBtn, styles.btnText)} onClick={() => selectFilter(2)}>
             году выпуска
           </button>
@@ -117,7 +117,7 @@ export default function Centerblock() {
             </label>
           </div>
         </div>
-        <div className={styles.filterBtnBox}>
+        <div>
           <button className={classNames(styles.filterBtn, styles.btnText)} onClick={() => selectFilter(3)}>
             жанру
           </button>
