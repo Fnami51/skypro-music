@@ -74,30 +74,38 @@
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: "Montserrat", sans-serif;
+  color: #ffffff;
 }
 
-a {
-  color: inherit;
+button,
+._btn {
+  cursor: pointer;
+}
+  
+ul li {
+  list-style: none;
+}
+
+a, a:visited {
   text-decoration: none;
+  font-family: "Montserrat", sans-serif;
+  cursor: pointer;
 }
 
 @media (prefers-color-scheme: dark) {
