@@ -6,6 +6,7 @@ import Track from "./track"
 import classNames from "classnames"
 import { getTracks } from "../api/tracksApi";
 import { useEffect, useState } from "react";
+import useTracks from "../context/TracksHooks";
 
 interface User {
   id: number;
@@ -28,6 +29,7 @@ interface Track {
 }
 
 export default function Centerblock() {
+  const { setPlaylist } = useTracks();
   const [tracks, setTracks] = useState<Track[]>([])
   const [filter, setFilter] = useState<number>(0)
 
@@ -40,6 +42,7 @@ export default function Centerblock() {
       console.log(answerFromApi)
 
       setTracks(answerFromApi);
+      setPlaylist(answerFromApi);
     }
 
     requestInApi();

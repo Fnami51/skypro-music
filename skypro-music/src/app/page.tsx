@@ -5,9 +5,11 @@ import Header from "../../components/header";
 import Centerblock from "../../components/centerblock";
 import Sidebar from "../../components/sidebar";
 import Soundbar from "../../components/bar";
+import { TracksProvider } from "../../context/TracksContext";
 
 export default function Home() {
   return (
+    <TracksProvider>
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <main className={styles.main}>
@@ -27,5 +29,6 @@ export default function Home() {
         <footer className="footer"></footer>
       </div>
     </div>
+    </TracksProvider>
   );
 }
