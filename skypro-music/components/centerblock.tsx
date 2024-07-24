@@ -7,6 +7,8 @@ import classNames from "classnames"
 import { getTracks } from "../api/tracksApi";
 import { useEffect, useState } from "react";
 import useTracks from "../context/TracksHooks";
+import { useDispatch } from "react-redux";
+import { setPlaylist as setPlaylistAction } from "@/store/features/playlistSlice";
 
 interface User {
   id: number;
@@ -29,13 +31,13 @@ interface Track {
 }
 
 export default function Centerblock() {
+  const dispatch = useDispatch();
   const { setPlaylist } = useTracks();
   const [tracks, setTracks] = useState<Track[]>([])
   const [filter, setFilter] = useState<number>(0)
 
   useEffect(() => {
     async function requestInApi() {
-      // сonst token: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxOTU3NDU4NywiaWF0IjoxNzE5NDg4MTg3LCJqdGkiOiI0M2JiNTNmZWViZmI0NGQwOWRmMzM3YWFiNzUzYjMxNyIsInVzZXJfaWQiOjQxMDJ9.XORoN0mHybvru7KwGzb5mBrl6IVtFlzDaYe7byys4T0";
       
       const answerFromApi: Track[] = await getTracks(/*token*/);
 
@@ -43,10 +45,11 @@ export default function Centerblock() {
 
       setTracks(answerFromApi);
       setPlaylist(answerFromApi);
+      dispatch(setPlaylistAction(answerFromApi))
     }
 
     requestInApi();
-  }, [])
+  }, [dispatch])
 
   const filteredAuthors: string[] = tracks
   .map(track => track.author)
@@ -151,7 +154,7 @@ export default function Centerblock() {
         </div>
         <div className={styles.playlist}>
           {tracks.map(track => (
-            <Track key={track.id} {...track} />
+            <Track key={track.id} track={track} />
           ))}
         </div>
       </div>

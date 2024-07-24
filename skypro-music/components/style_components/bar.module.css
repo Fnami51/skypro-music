@@ -16,12 +16,6 @@
     flex-direction: column;
 }
 
-.progress {
-    width: 100%;
-    height: 5px;
-    background: #2e2e2e;
-}
-
 .block {
     height: 73px;
     display: -webkit-box;

@@ -1,6 +1,8 @@
 import Image from "next/image"
 import styles from "./style_components/track.module.css"
 import classNames from "classnames";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setCurrentTrack } from "@/store/features/playlistSlice";
 
 interface User {
   id: number;
@@ -10,27 +12,41 @@ interface User {
   last_name: string;
 }
 
-interface TrackProps {
-  id: number;
-  name: string;
-  author: string;
-  release_date: string;
-  genre: string;
-  duration_in_seconds: number;
-  logo: string;
-  track_file: string;
-  started_user: User[];
+interface Track {
+    id: number;
+    name: string;
+    author: string;
+    release_date: string;
+    genre: string;
+    duration_in_seconds: number;
+    logo: string;
+    track_file: string;
+    started_user: User[];
 }
 
-export default function Track({ id, name, author, release_date, genre, duration_in_seconds, logo, track_file, started_user }: TrackProps) {
+interface TrackProps {
+  track: Track
+}
+
+export default function Track({track}: TrackProps) {
+    const dispatch = useAppDispatch();
+    const playlist = useAppSelector(state => state.playlist.playlist)
+    const {id, name, author, release_date, genre, duration_in_seconds, logo, track_file, started_user} = track;
     const formatDuration = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     }
 
+    function headleClick() {
+        dispatch(setCurrentTrack({
+            currentTrack: track,
+            playlist
+        }))
+    }
+
     return (
-        <div className={styles.background}>
+        <div className={styles.background} onClick={headleClick}>
             <div className={styles.track}>
                 <div className={classNames(styles.title, styles.column1)}>
                     <div className={styles.picture}>
@@ -39,7 +55,7 @@ export default function Track({ id, name, author, release_date, genre, duration_
                         </svg>
                     </div>
                     <div>
-                        <a className={styles.titleLink} href={track_file}>{name} <span className={styles.titleSpan}></span></a>
+                        <span className={styles.titleLink}>{name} <span className={styles.titleSpan}></span></span>
                     </div>
                 </div>
                 <div className={classNames(styles.author, styles.column2)}>

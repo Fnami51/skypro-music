@@ -1,21 +1,34 @@
-'use client';
+"use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../src/store/store";
+import {
+  playNextTrack,
+  playPreviousTrack,
+  setShuffle,
+  setCurrentTrack,
+} from "../src/store/features/playlistSlice";
 import styles from "./style_components/bar.module.css";
 import classNames from "classnames";
 import useTracks from "../context/TracksHooks";
+import { useAppSelector } from "../src/store/store";
+import Progress from "./progress";
 
 export default function Soundbar() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const { playlist } = useTracks();
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const [isLooping, setIsLooping] = useState(false);
+  const dispatch = useDispatch();
+  const playlist = useAppSelector((state) => state.playlist.playlist);
+  const currentTrack = useAppSelector((state) => state.playlist.currentTrack);
+  const isShuffle = useAppSelector((state) => state.playlist.isShuffle);
+  const [isRepeat, setIsRepeat] = useState(false);
+
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
 
-  function togglePlay() {
+  const togglePlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -25,53 +38,69 @@ export default function Soundbar() {
       audio.play();
     }
     setIsPlaying(!isPlaying);
-  }
+  }, [isPlaying]);
 
-  function handleEnded() {
-    if (isLooping) {
-      audioRef.current?.play();
-    } else if (currentTrackIndex < playlist.length - 1) {
-      setCurrentTrackIndex(currentTrackIndex + 1);
+  const handleEnded = useCallback(() => {
+    const audio = audioRef.current;
+    if (isRepeat) {
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play();
+      }
     } else {
-      setCurrentTrackIndex(0);
+      dispatch(playNextTrack())
     }
-  }
+  }, [dispatch]);
 
-  function handleTimeUpdate() {
+  const handleTimeUpdate = useCallback(() => {
     setCurrentTime(audioRef.current?.currentTime ?? 0);
-  }
+  }, []);
 
-  function handleLoadedMetadata() {
+  const handleLoadedMetadata = useCallback(() => {
     setDuration(audioRef.current?.duration ?? 0);
-  }
+  }, []);
 
-  function handleVolumeChange(event: React.ChangeEvent<HTMLInputElement>) {
+  const handleVolumeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(event.target.value);
     setVolume(newVolume);
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
-  }
+  }, []);
 
-  function handleProgressChange(event: React.ChangeEvent<HTMLInputElement>) {
+  const handleProgressChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = Number(event.target.value);
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
     }
     setCurrentTime(newTime);
-  }
+  }, []);
+
+  // const handleTrackClick = useCallback(
+  //   () => {
+  //     dispatch(setCurrentTrack());
+  //     setIsPlaying(true);
+  //   },
+  //   [dispatch]
+  // );
 
   useEffect(() => {
     const audio = audioRef.current;
 
-    if (audio && playlist.length > 0) {
-      audio.src = playlist[currentTrackIndex].track_file;
+    if (audio && playlist.length > 0 && currentTrack) {
+      audio.src = currentTrack.track_file;
       audio.addEventListener('ended', handleEnded);
       audio.addEventListener('timeupdate', handleTimeUpdate);
       audio.addEventListener('loadedmetadata', handleLoadedMetadata);
 
       if (isPlaying) {
-        audio.play();
+        audio.play().catch((error) => {
+          if (error.name === 'AbortError') {
+            console.log('Загрузка звука прервана:', error);
+          } else {
+            console.error('Ошибка воспроизведения:', error);
+          }
+        });
       }
 
       return () => {
@@ -80,50 +109,52 @@ export default function Soundbar() {
         audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       };
     }
-  }, [currentTrackIndex, playlist, isPlaying]);
+  }, [currentTrack, playlist, isPlaying, handleEnded, handleTimeUpdate, handleLoadedMetadata]);
+
+if (!currentTrack) {
+  return null
+}
 
   return (
     <div className={styles.background}>
       <div className={styles.content}>
         
         <div>
-          <input
-            className={styles.progress}
-            type="range"
-            min="0"
-            max={duration}
-            value={currentTime}
-            onChange={handleProgressChange}
-          />
-          <span>{Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')}</span> / 
-          <span>{Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}</span>
+            <Progress 
+              max={duration}
+              value={currentTime}
+              step={0.1}
+              onChange={handleProgressChange}
+            />
+            <span>{Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')}</span> / 
+            <span>{Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}</span>
         </div>
 
         <div className={styles.block}>
           <div className={styles.player}>
-            <audio ref={audioRef} controls style={{ display: "none" }}></audio>
+            <audio ref={audioRef}></audio>
             <div className={styles.controls}>
-              <button className={styles.btnPrev} onClick={() => setCurrentTrackIndex((prev) => (prev > 0 ? prev - 1 : playlist.length - 1))}>
+              <button className={styles.btnPrev} onClick={() => dispatch(playPreviousTrack())}>
                 <svg className={styles.btnPrevSvg}>
                   <use xlinkHref="img/icon/sprite.svg#icon-prev"></use>
                 </svg>
               </button>
               <button className={styles.btnPlay} onClick={togglePlay}>
                 <svg className={styles.btnPlaySvg}>
-                  <use xlinkHref="img/icon/sprite.svg#icon-play"></use>
+                  <use xlinkHref={isPlaying ? "img/icon/sprite.svg#icon-pause" : "img/icon/sprite.svg#icon-play"}></use>
                 </svg>
               </button>
-              <button className={styles.btnNext} onClick={() => setCurrentTrackIndex((prev) => (prev < playlist.length - 1 ? prev + 1 : 0))}>
+              <button className={styles.btnNext} onClick={() => dispatch(playNextTrack())}>
                 <svg className={styles.btnNextSvg}>
                   <use xlinkHref="img/icon/sprite.svg#icon-next"></use>
                 </svg>
               </button>
-              <button className={classNames(styles.btnRepeat, styles.btnIcon)} onClick={() => setIsLooping(!isLooping)}>
+              <button className={classNames(styles.btnRepeat, styles.btnIcon)} onClick={() => setIsRepeat(!isRepeat)}>
                 <svg className={styles.btnRepeatSvg}>
-                  <use xlinkHref="img/icon/sprite.svg#icon-repeat"></use>
+                  <use xlinkHref={isRepeat ? "img/icon/sprite.svg#icon-repeatActive" : "img/icon/sprite.svg#icon-repeat"}></use>
                 </svg>
               </button>
-              <button className={classNames(styles.btnShuffle, styles.btnIcon)}>
+              <button className={classNames(styles.btnShuffle, styles.btnIcon)} onClick={() => dispatch(setShuffle(!isShuffle))}>
                 <svg className={styles.btnShuffleSvg}>
                   <use xlinkHref="img/icon/sprite.svg#icon-shuffle"></use>
                 </svg>
@@ -138,13 +169,13 @@ export default function Soundbar() {
                   </svg>
                 </div>
                 <div className={styles.author}>
-                  <a className={styles.authorLink} href="#">
-                    {playlist[currentTrackIndex]?.name ?? "Неизвестный трек"}
+                  <a className={styles.authorLink}>
+                    {currentTrack.name ?? "Неизвестный трек"}
                   </a>
                 </div>
                 <div className={styles.album}>
-                  <a className={styles.albumLink} href="#">
-                    {playlist[currentTrackIndex]?.author ?? "Неизвестный исполнитель"}
+                  <a className={styles.albumLink}>
+                    {currentTrack.author ?? "Неизвестный исполнитель"}
                   </a>
                 </div>
               </div>
@@ -162,26 +193,29 @@ export default function Soundbar() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className={styles.volume}>
-            <div className={styles.volContent}>
-              <div className={styles.volIcon}>
-                <svg className={styles.volSvg}>
-                  <use xlinkHref="img/icon/sprite.svg#icon-volume"></use>
-                </svg>
-              </div>
-              <div className={classNames(styles.volProgress, styles.btn)}>
-                <input
-                  className={classNames(styles.volProgress, styles.btn)}
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={volume}
-                  onChange={handleVolumeChange}
-                />
+
+            <div className={styles.volume}>
+              <div className={styles.volContent}>
+                <div className={styles.volIcon}>
+                  <svg className={styles.volSvg}>
+                    <use xlinkHref="img/icon/sprite.svg#icon-volume"></use>
+                  </svg>
+                </div>
+                <div className={classNames(styles.volProgress, styles.btn)}>
+                  <input
+                    className={classNames(styles.volProgress, styles.btn)}
+                    type="range"
+                    name="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={volume}
+                    onChange={handleVolumeChange}
+                  />
+                </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
