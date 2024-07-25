@@ -31,15 +31,14 @@ export default function Soundbar() {
   
 
   const togglePlay = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play();
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying((prev) => !prev);
     }
-    setIsPlaying(!isPlaying);
   }, [isPlaying]);
 
   const handleEnded = useCallback(() => {
@@ -138,14 +137,19 @@ if (!currentTrack) {
 
         <div className={styles.block}>
           <div className={styles.player}>
-            <audio ref={audioRef}></audio>
+
+            <audio ref={audioRef} 
+              onTimeUpdate={(e) => {setCurrentTime(e.currentTarget.currentTime);}}>
+
+              </audio>
+
             <div className={styles.controls}>
               <button className={styles.btnPrev} onClick={() => dispatch(playPreviousTrack())}>
                 <svg className={styles.btnPrevSvg}>
                   <use xlinkHref="img/icon/sprite.svg#icon-prev"></use>
                 </svg>
               </button>
-              <button className={styles.btnPlay} onClick={togglePlay}>
+              <button className={styles.btnPlay} id="pauseBtn" onClick={togglePlay}>
                 <svg className={styles.btnPlaySvg}>
                   <use xlinkHref={isPlaying ? "img/icon/sprite.svg#icon-pause" : "img/icon/sprite.svg#icon-play"}></use>
                 </svg>
