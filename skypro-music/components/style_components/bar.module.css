@@ -150,6 +150,13 @@
     cursor: pointer;
   }
 
+  .btnActive {
+    fill: white;
+    stroke: #ffffff;
+    cursor: pointer;
+    color: white;
+  }
+
   /*TrackPlay*/
 
 .trackPlay{

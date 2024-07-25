@@ -3,6 +3,7 @@ import styles from "./style_components/track.module.css"
 import classNames from "classnames";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setCurrentTrack } from "@/store/features/playlistSlice";
+import { useClickTrack } from "../context/ClickTrackContext";
 
 interface User {
   id: number;
@@ -37,8 +38,10 @@ export default function Track({track}: TrackProps) {
         const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     }
+    const {setClickTrack} = useClickTrack()
 
     function headleClick() {
+        setClickTrack()
         dispatch(setCurrentTrack({
             currentTrack: track,
             playlist
