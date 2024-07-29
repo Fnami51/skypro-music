@@ -160,8 +160,8 @@ if (!currentTrack) {
                 </svg>
               </button>
               <button className={classNames(styles.btnRepeat, styles.btnIcon)} onClick={() => setIsRepeat(!isRepeat)}>
-                <svg className={styles.btnRepeatSvg}>
-                  <use xlinkHref={isRepeat ? "img/icon/sprite.svg#icon-repeatActive" : "img/icon/sprite.svg#icon-repeat"}></use>
+                <svg className={classNames(styles.btnRepeatSvg, isRepeat? styles.btnActive : null)}>
+                  <use xlinkHref={"img/icon/sprite.svg#icon-repeat"}></use>
                 </svg>
               </button>
               <button className={classNames(styles.btnShuffle, styles.btnIcon)} onClick={() => dispatch(setShuffle(!isShuffle))}>

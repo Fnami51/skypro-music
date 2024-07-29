@@ -36,6 +36,8 @@ const initialState: PlaylistState = {
     isPlaying: false
 };
 
+// Добавь isRepeat в слайсы редакса
+
 const playlistSlice = createSlice({
     name: 'playlist',
     initialState,
