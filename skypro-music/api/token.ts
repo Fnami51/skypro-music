@@ -2,7 +2,7 @@ export function updateToken(refresh: string) {
     fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
         method: "POST",
         body: JSON.stringify({
-            refresh: refresh,
+            refresh,
         }),
           headers: {
             "content-type": "application/json",
@@ -15,6 +15,7 @@ export function updateToken(refresh: string) {
             console.error('Token error', response.status);
         };
     }).then((data) => {
+        console.log("Access token", data.access)
         return data.access;
     });
 }

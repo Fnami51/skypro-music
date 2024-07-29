@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
     id: number;
@@ -25,19 +25,24 @@ interface PlaylistState {
     currentTrack: Track | null;
     isShuffle: boolean;
     shuffledPlaylist: Track[];
+    isPlaying: boolean;
 }
 
 const initialState: PlaylistState = {
     playlist: [],
     currentTrack: null,
     isShuffle: false,
-    shuffledPlaylist: []
+    shuffledPlaylist: [],
+    isPlaying: false
 };
 
 const playlistSlice = createSlice({
     name: 'playlist',
     initialState,
     reducers: {
+        setIsPlaying(state, action: PayloadAction<boolean>){
+            state.isPlaying = action.payload
+        },
         setPlaylist(state, action: PayloadAction<Track[]>) {
             state.playlist = action.payload;
         },
@@ -48,10 +53,12 @@ const playlistSlice = createSlice({
             state.playlist = state.playlist.filter(track => track.id !== action.payload);
         },
         playNextTrack(state) {
+            state.isPlaying = true
             const playlist = state.isShuffle ? state.shuffledPlaylist : state.playlist;
             const currentIndex = playlist.findIndex(
                 (track) => track.id === state.currentTrack?.id
             );
+            if (currentIndex === playlist.length - 1) {return}
             const nextIndex = currentIndex + 1;
             if (nextIndex >= playlist.length) {
                 state.currentTrack = playlist[0];
@@ -60,10 +67,12 @@ const playlistSlice = createSlice({
             }
         },
         playPreviousTrack(state) {
+            state.isPlaying = true
             const playlist = state.isShuffle ? state.shuffledPlaylist : state.playlist;
             const currentIndex = playlist.findIndex(
                 (track) => track.id === state.currentTrack?.id
             );
+            if (!currentIndex) {return}
             const prevIndex = currentIndex - 1;
             if (prevIndex < 0) {
                 state.currentTrack = playlist[playlist.length - 1];
@@ -78,6 +87,7 @@ const playlistSlice = createSlice({
             currentTrack: Track,
             playlist: Track[]
         }>) {
+            state.isPlaying = true
             state.currentTrack = action.payload.currentTrack;
             state.playlist = action.payload.playlist;
             state.shuffledPlaylist = [...action.payload.playlist].sort(() => 0.5 - Math.random())
@@ -85,5 +95,5 @@ const playlistSlice = createSlice({
     },
 });
 
-export const { setPlaylist, addTrack, removeTrack, playNextTrack, playPreviousTrack, setShuffle, setCurrentTrack } = playlistSlice.actions;
+export const { setIsPlaying, setPlaylist, addTrack, removeTrack, playNextTrack, playPreviousTrack, setShuffle, setCurrentTrack } = playlistSlice.actions;
 export const playlistReducer = playlistSlice.reducer;

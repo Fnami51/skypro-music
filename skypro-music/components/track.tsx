@@ -1,9 +1,14 @@
+"use client";
+
 import Image from "next/image"
 import styles from "./style_components/track.module.css"
 import classNames from "classnames";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setCurrentTrack } from "@/store/features/playlistSlice";
 import { useClickTrack } from "../context/ClickTrackContext";
+import { updateToken } from "../api/token";
+import { useEffect, useState } from "react";
+import { access } from "fs";
 
 interface User {
   id: number;
@@ -31,7 +36,7 @@ interface TrackProps {
 
 export default function Track({track}: TrackProps) {
     const dispatch = useAppDispatch();
-    const playlist = useAppSelector(state => state.playlist.playlist)
+    const {playlist, currentTrack, isPlaying} = useAppSelector(state => state.playlist)
     const {id, name, author, release_date, genre, duration_in_seconds, logo, track_file, started_user} = track;
     const formatDuration = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -39,6 +44,7 @@ export default function Track({track}: TrackProps) {
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     }
     const {setClickTrack} = useClickTrack()
+    const [trackDot, setTrackDot] = useState({isPulse: false, isSelect: false})
 
     function headleClick() {
         setClickTrack()
@@ -48,6 +54,30 @@ export default function Track({track}: TrackProps) {
         }))
     }
 
+    /* function sendLike() {
+        // access = sessionStorge
+
+        addFavotite(access, id).then(() => {
+            
+        })
+    } */
+
+    useEffect(() => {
+        if (currentTrack) {
+            if (currentTrack.id === id) {
+                setTrackDot({...trackDot, isSelect: true})
+                setTrackDot({...trackDot, isPulse: isPlaying})
+            } else {
+                setTrackDot({...trackDot, isSelect: false})
+            }
+            // if (currentTrack.id === id && isPlaying) {
+            //     setTrackDot({...trackDot, isPulse: true})
+            // } else {
+            //     setTrackDot({...trackDot, isPulse: false})
+            // }
+        }
+    }, [currentTrack, isPlaying])
+
     return (
         <div className={styles.background} onClick={headleClick}>
             <div className={styles.track}>
@@ -56,6 +86,7 @@ export default function Track({track}: TrackProps) {
                         <svg className={styles.titleSvg}>
                             <use xlinkHref="img/icon/sprite.svg#icon-note"></use>
                         </svg>
+                        {/* Добавь сюда точку-пульсар trackDot.isPulse  trackDot.isSelect */}
                     </div>
                     <div>
                         <span className={styles.titleLink}>{name} <span className={styles.titleSpan}></span></span>
@@ -68,9 +99,11 @@ export default function Track({track}: TrackProps) {
                     <a className={styles.albumLink} href="http://">{genre}</a>
                 </div>
                 <div className={styles.column4}>
+                    <button /*onClick={sendLike}*/>
                     <svg className={styles.timeSvg}>
                         <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
                     </svg>
+                    </button>
                     <span className={styles.timeText}>{formatDuration(duration_in_seconds)}</span>
                 </div>
             </div>

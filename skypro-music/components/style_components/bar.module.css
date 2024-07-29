@@ -151,10 +151,8 @@
   }
 
   .btnActive {
-    fill: white;
+    fill: #fff;
     stroke: #ffffff;
-    cursor: pointer;
-    color: white;
   }
 
   /*TrackPlay*/

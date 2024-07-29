@@ -2,12 +2,13 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../src/store/store";
+import { RootState, useAppDispatch } from "../src/store/store";
 import {
   playNextTrack,
   playPreviousTrack,
   setShuffle,
   setCurrentTrack,
+  setIsPlaying,
 } from "../src/store/features/playlistSlice";
 import styles from "./style_components/bar.module.css";
 import classNames from "classnames";
@@ -18,11 +19,9 @@ import { useClickTrack } from "../context/ClickTrackContext";
 
 export default function Soundbar() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const dispatch = useDispatch();
-  const playlist = useAppSelector((state) => state.playlist.playlist);
-  const currentTrack = useAppSelector((state) => state.playlist.currentTrack);
-  const isShuffle = useAppSelector((state) => state.playlist.isShuffle);
+  // const [isPlaying, setIsPlaying] = useState(false);
+  const dispatch = useAppDispatch();
+  const { isShuffle, currentTrack, isPlaying, playlist } = useAppSelector((state) => state.playlist);
   const [isRepeat, setIsRepeat] = useState(false);
   const {isClick} = useClickTrack()
   const [currentTime, setCurrentTime] = useState(0);
@@ -30,16 +29,18 @@ export default function Soundbar() {
   const [volume, setVolume] = useState(1);
   
 
-  const togglePlay = useCallback(() => {
+  const togglePlay = () => {
     if (audioRef.current) {
-      if (isPlaying) {
+
+      if (!isPlaying) {
+        dispatch(setIsPlaying(true))
         audioRef.current.play();
-      } else {
+      } else { 
+        dispatch(setIsPlaying(false))
         audioRef.current.pause();
-      }
-      setIsPlaying((prev) => !prev);
+      } 
     }
-  }, [isPlaying]);
+  };
 
   const handleEnded = useCallback(() => {
     const audio = audioRef.current;
@@ -94,13 +95,14 @@ export default function Soundbar() {
       audio.addEventListener('timeupdate', handleTimeUpdate);
       audio.addEventListener('loadedmetadata', handleLoadedMetadata);
 
+      //dispatch(setIsPlaying(true))
       // togglePlay()
 
-      //  if (isPlaying) {
-      //    audio.pause();
-      //  } else {
-      //    audio.play();
-      //  }
+        // if (isPlaying) {
+        //  audio.pause();
+        // } else {
+       // audio.play();
+        // }
 
       return () => {
         audio.removeEventListener('ended', handleEnded);
@@ -108,7 +110,7 @@ export default function Soundbar() {
         audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       };
     }
-  }, [currentTrack, playlist, isPlaying, handleEnded, handleTimeUpdate, handleLoadedMetadata]);
+  }, [currentTrack]);
 
   // useEffect(() => {
   //   togglePlay();
@@ -137,8 +139,8 @@ if (!currentTrack) {
           <div className={styles.player}>
 
             <audio ref={audioRef} 
-              onTimeUpdate={(e) => {setCurrentTime(e.currentTarget.currentTime);}}>
-
+              onTimeUpdate={(e) => {setCurrentTime(e.currentTarget.currentTime);}}
+              autoPlay>
               </audio>
 
             <div className={styles.controls}>
@@ -163,8 +165,8 @@ if (!currentTrack) {
                 </svg>
               </button>
               <button className={classNames(styles.btnShuffle, styles.btnIcon)} onClick={() => dispatch(setShuffle(!isShuffle))}>
-                <svg className={styles.btnShuffleSvg}>
-                  <use xlinkHref={isShuffle ? "img/icon/sprite.svg#icon-shuffleActive" : "img/icon/sprite.svg#icon-shuffle"}></use>
+                <svg className={classNames(styles.btnShuffleSvg, isShuffle? styles.btnActive : null)}>
+                  <use xlinkHref={"img/icon/sprite.svg#icon-shuffle"}></use>
                 </svg>
               </button>
             </div>
