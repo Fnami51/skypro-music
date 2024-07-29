@@ -35,6 +35,7 @@
     background-color: #313131;
     border-radius: 50%;
     cursor: pointer;
+    border: none;
 }
 
 .block{

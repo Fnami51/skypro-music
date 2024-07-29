@@ -19,20 +19,20 @@ export function updateToken(refresh: string) {
     });
 }
 
-export async function getToken(email: string, password: string) {
-    const result = await fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
+export function getToken(email: string, password: string) {
+    fetch("https://webdev-music-003b5b991590.herokuapp.com/user/token/", {
         method: "POST",
         body: JSON.stringify({
-            email: email,
-            password: password,
+          email,
+          password,
         }),
-          headers: {
-            "content-type": "application/json",
-          },
-    });
-    if (!result.ok) {
-        console.error('Token error', result.status);
-    };
-    const data = result.json()
-    return data;
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log(json)
+            sessionStorage.setItem("refresh", json.refresh)
+        });
 }

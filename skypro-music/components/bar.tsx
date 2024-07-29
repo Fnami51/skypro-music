@@ -33,9 +33,9 @@ export default function Soundbar() {
   const togglePlay = useCallback(() => {
     if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.pause();
-      } else {
         audioRef.current.play();
+      } else {
+        audioRef.current.pause();
       }
       setIsPlaying((prev) => !prev);
     }
@@ -94,15 +94,13 @@ export default function Soundbar() {
       audio.addEventListener('timeupdate', handleTimeUpdate);
       audio.addEventListener('loadedmetadata', handleLoadedMetadata);
 
-      if (isPlaying) {
-        audio.play().catch((error) => {
-          if (error.name === 'AbortError') {
-            console.log('Загрузка звука прервана:', error);
-          } else {
-            console.error('Ошибка воспроизведения:', error);
-          }
-        });
-      }
+      // togglePlay()
+
+      //  if (isPlaying) {
+      //    audio.pause();
+      //  } else {
+      //    audio.play();
+      //  }
 
       return () => {
         audio.removeEventListener('ended', handleEnded);
@@ -112,9 +110,9 @@ export default function Soundbar() {
     }
   }, [currentTrack, playlist, isPlaying, handleEnded, handleTimeUpdate, handleLoadedMetadata]);
 
-  useEffect(() => {
-    togglePlay();
-  }, [isClick]);
+  // useEffect(() => {
+  //   togglePlay();
+  // }, [isClick]);
 
 if (!currentTrack) {
   return null
