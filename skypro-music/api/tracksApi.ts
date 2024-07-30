@@ -49,3 +49,16 @@ export async function getTracks(/*token: string*/): Promise<Track[]>{
     };
     return result.json();
 }
+
+export async function getFavoriteTracks(access: string): Promise<Track[]>{
+    const result = await fetch('https://webdev-music-003b5b991590.herokuapp.com/catalog/track/favorite/all/', {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${access}`,
+        }
+    });
+    if (!result.ok) {
+        console.error('Error Api', result.status);
+    };
+    return result.json();
+}

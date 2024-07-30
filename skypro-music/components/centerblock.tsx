@@ -7,8 +7,8 @@ import classNames from "classnames"
 import { getTracks } from "../api/tracksApi";
 import { useEffect, useState } from "react";
 import useTracks from "../context/TracksHooks";
-import { useDispatch } from "react-redux";
 import { setPlaylist as setPlaylistAction } from "@/store/features/playlistSlice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 
 interface User {
   id: number;
@@ -31,9 +31,8 @@ interface Track {
 }
 
 export default function Centerblock() {
-  const dispatch = useDispatch();
-  const { setPlaylist } = useTracks();
-  const [tracks, setTracks] = useState<Track[]>([])
+  const dispatch = useAppDispatch();
+  const { playlist } = useAppSelector((state) => state.playlist);
   const [filter, setFilter] = useState<number>(0)
 
   useEffect(() => {
@@ -43,21 +42,19 @@ export default function Centerblock() {
 
       console.log(answerFromApi)
 
-      setTracks(answerFromApi);
-      setPlaylist(answerFromApi);
       dispatch(setPlaylistAction(answerFromApi))
     }
 
     requestInApi();
   }, [dispatch])
 
-  const filteredAuthors: string[] = tracks
+  const filteredAuthors: string[] = playlist
   .map(track => track.author)
   .filter((value, index, self) => {
     return self.indexOf(value) === index;
   });
 
-  const filteredGenres: string[] = tracks
+  const filteredGenres: string[] = playlist
   .map(track => track.genre)
   .filter((value, index, self) => {
     return self.indexOf(value) === index;
@@ -153,7 +150,7 @@ export default function Centerblock() {
           </div>
         </div>
         <div className={styles.playlist}>
-          {tracks.map(track => (
+          {playlist.map(track => (
             <Track key={track.id} track={track} />
           ))}
         </div>

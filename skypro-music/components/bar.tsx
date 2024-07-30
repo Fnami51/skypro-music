@@ -123,7 +123,7 @@ if (!currentTrack) {
 
         <div className={styles.block}>
           <div className={styles.player}>
-
+           
             <audio ref={audioRef} 
               onTimeUpdate={(e) => {setCurrentTime(e.currentTarget.currentTime);}}
               autoPlay>
@@ -157,40 +157,45 @@ if (!currentTrack) {
               </button>
             </div>
 
-            <div className={styles.trackPlay}>
-              <div className={styles.contain}>
-                <div className={styles.image}>
-                  <svg className={styles.svg}>
-                    <use xlinkHref="img/icon/sprite.svg#icon-note"></use>
-                  </svg>
+              <div className={styles.trackPlay}>
+                <div className={styles.contain}>
+                  <div className={styles.image}>
+                    <svg className={styles.svg}>
+                      <use xlinkHref="img/icon/sprite.svg#icon-note"></use>
+                    </svg>
+                  </div>
+                  <div className={styles.author}>
+                    <a className={styles.authorLink}>
+                      {currentTrack.name ?? "Неизвестный трек"}
+                    </a>
+                  </div>
+                  <div className={styles.album}>
+                    <a className={styles.albumLink}>
+                      {currentTrack.author ?? "Неизвестный исполнитель"}
+                    </a>
+                 </div>
                 </div>
-                <div className={styles.author}>
-                  <a className={styles.authorLink}>
-                    {currentTrack.name ?? "Неизвестный трек"}
-                  </a>
-                </div>
-                <div className={styles.album}>
-                  <a className={styles.albumLink}>
-                    {currentTrack.author ?? "Неизвестный исполнитель"}
-                  </a>
-                </div>
-              </div>
 
-              <div className={styles.likes}>
-                <div className={classNames(styles.like, styles.btnIcon)}>
+                <div className={styles.likes}>
+                <button className={classNames(styles.like, styles.btnIcon)}>
                   <svg className={styles.likeSvg}>
                     <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
                   </svg>
-                </div>
-                <div className={classNames(styles.dislike, styles.btnIcon)}>
+                </button>
+                {/* <div className={classNames(styles.dislike, styles.btnIcon)}>
                   <svg className={styles.dislikeSvg}>
                     <use xlinkHref="img/icon/sprite.svg#icon-dislike"></use>
                   </svg>
+                </div> */}
                 </div>
               </div>
-            </div>
 
-            <div className={styles.volume}>
+
+              
+
+          </div>
+
+          <div className={styles.volume}>
               <div className={styles.volContent}>
                 <div className={styles.volIcon}>
                   <svg className={styles.volSvg}>
@@ -210,9 +215,8 @@ if (!currentTrack) {
                   />
                 </div>
               </div>
-            </div>
+              </div>
 
-          </div>
         </div>
       </div>
     </div>

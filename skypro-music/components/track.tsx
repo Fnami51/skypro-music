@@ -9,7 +9,8 @@ import { setCurrentTrack } from "@/store/features/playlistSlice";
 import { useClickTrack } from "../context/ClickTrackContext";
 import { updateToken } from "../api/token";
 import { useEffect, useState } from "react";
-import { access } from "fs";
+import { addFavotite } from "../api/favoriteApi";
+import { setLike } from "@/store/features/favoriteSlice";
 
 interface User {
   id: number;
@@ -38,6 +39,7 @@ interface TrackProps {
 export default function Track({track}: TrackProps) {
     const dispatch = useAppDispatch();
     const {playlist, currentTrack, isPlaying} = useAppSelector(state => state.playlist)
+    const {isLike} = useAppSelector(state => state.favorite)
     const {id, name, author, release_date, genre, duration_in_seconds, logo, track_file, started_user} = track;
     const formatDuration = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -56,17 +58,13 @@ export default function Track({track}: TrackProps) {
     }
 
     function sendLike() {
-        // access = sessionStorge
-        const access = updateToken(sessionStorage.getItem("refresh"))
-        console.log(access)
-
-        // addFavotite(access, id).then(() => {
-            
-        //})
+        addFavotite(access, id).then((result) => {
+            dispatch(setLike(!isLike))
+            console.log(result)
+        })
     } 
 
     useEffect(() => {
-        console.log(trackDot)
         if (currentTrack) {
             if (currentTrack.id === id) {
                 setTrackDot(prevTrackDot => ({
@@ -84,9 +82,9 @@ export default function Track({track}: TrackProps) {
     }, [currentTrack, isPlaying])
 
     return (
-        <div className={styles.background} onClick={headleClick}>
+        <div className={styles.background}>
             <div className={styles.track}>
-                <div className={classNames(styles.title, styles.column1)}>
+                <div className={classNames(styles.title, styles.column1)}  onClick={headleClick}>
                     <div className={styles.picture}>
                         { trackDot.isSelect ? (trackDot.isPulse ? (
                             <div className={classNames(dot.dot, dot.playingDot)}></div>
@@ -109,11 +107,14 @@ export default function Track({track}: TrackProps) {
                     <a className={styles.albumLink} href="http://">{genre}</a>
                 </div>
                 <div className={styles.column4}>
-                    <button onClick={sendLike}>
-                    <svg className={styles.timeSvg}>
+                    
+                    <button className={styles.btnLike} onClick={sendLike}>
+                    <svg className={classNames(styles.timeSvg, isLike ? styles.active : null)}>
                         <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
                     </svg>
                     </button>
+
+
                     <span className={styles.timeText}>{formatDuration(duration_in_seconds)}</span>
                 </div>
             </div>

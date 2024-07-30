@@ -46,6 +46,7 @@
     justify-content: flex-start;
 }
 
+
 .controls {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -210,7 +211,6 @@
     grid-row: 1;
     grid-column: 2;
     grid-area: author;
-    min-width: 49px;
 }
 
 .authorLink{
@@ -255,6 +255,8 @@
 
 .like{
     padding: 5px;
+    background-color: transparent;
+    border: none;
 }
 
 .likeSvg{
@@ -279,12 +281,7 @@
 /*Volume*/
 
 .volume{
-    width: auto;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
     align-items: center;
     padding: 0 92px 0 0;
 }

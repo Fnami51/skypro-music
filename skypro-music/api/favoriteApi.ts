@@ -1,4 +1,4 @@
-function addFavotite(access: string, id: number) {
+export function addFavotite(access: string, id: number) {
     return fetch("https://webdev-music-003b5b991590.herokuapp.com/catalog/track/"+id+"/favorite/", {
         method: "POST",
         headers: {

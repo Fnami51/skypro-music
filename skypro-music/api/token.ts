@@ -8,16 +8,11 @@ export function updateToken(refresh: string | null) {
             "content-type": "application/json",
           },
     }).then((response) => {
-        if (response.ok) {
-            return response.json()
-            
-        } else {
-            console.error('Token error', response.status);
-        };
-    }).then((data) => {
-        console.log("Access token", data.access)
-        return data.access;
-    });
+      if (response.status === 401) {
+          throw new Error ("Error auth")
+      }
+      return response.json()
+  })
 }
 
 export function getToken(email: string, password: string) {
@@ -31,9 +26,11 @@ export function getToken(email: string, password: string) {
           "content-type": "application/json",
         },
       })
-        .then((response) => response.json())
-        .then((json) => {
-            console.log(json)
-            sessionStorage.setItem("refresh", json.refresh)
-        });
+        .then((response) => {
+          if (response.status === 401) {
+              throw new Error ("Error auth")
+          }
+          return response.json()})
+          .then((data) => {
+            return data.refresh});
 }
