@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import styles from "./style_components/track.module.css"
+import dot from "./style_components/dot.module.css"
 import classNames from "classnames";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setCurrentTrack } from "@/store/features/playlistSlice";
@@ -54,15 +55,18 @@ export default function Track({track}: TrackProps) {
         }))
     }
 
-    /* function sendLike() {
+    function sendLike() {
         // access = sessionStorge
+        const access = updateToken(sessionStorage.getItem("refresh"))
+        console.log(access)
 
-        addFavotite(access, id).then(() => {
+        // addFavotite(access, id).then(() => {
             
-        })
-    } */
+        //})
+    } 
 
     useEffect(() => {
+        console.log(trackDot)
         if (currentTrack) {
             if (currentTrack.id === id) {
                 setTrackDot({...trackDot, isSelect: true})
@@ -83,10 +87,15 @@ export default function Track({track}: TrackProps) {
             <div className={styles.track}>
                 <div className={classNames(styles.title, styles.column1)}>
                     <div className={styles.picture}>
-                        <svg className={styles.titleSvg}>
-                            <use xlinkHref="img/icon/sprite.svg#icon-note"></use>
-                        </svg>
-                        {/* Добавь сюда точку-пульсар trackDot.isPulse  trackDot.isSelect */}
+                        { trackDot.isSelect ? (trackDot.isPulse ? (
+                            <div className={classNames(dot.dot, dot.playingDot)}></div>
+                        ):(
+                            <div className={dot.dot}></div>
+                        )):(
+                            <svg className={styles.titleSvg}>
+                                <use xlinkHref="img/icon/sprite.svg#icon-note"></use>
+                            </svg>
+                        )}
                     </div>
                     <div>
                         <span className={styles.titleLink}>{name} <span className={styles.titleSpan}></span></span>
@@ -99,7 +108,7 @@ export default function Track({track}: TrackProps) {
                     <a className={styles.albumLink} href="http://">{genre}</a>
                 </div>
                 <div className={styles.column4}>
-                    <button /*onClick={sendLike}*/>
+                    <button onClick={sendLike}>
                     <svg className={styles.timeSvg}>
                         <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
                     </svg>

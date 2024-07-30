@@ -4,6 +4,7 @@ import Image from "next/image"
 import styles from "./style_components/sidebar.module.css"
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Collections from "./sets";
 
 export default function Sidebar() {
   const navigate = useRouter()
@@ -31,43 +32,8 @@ export default function Sidebar() {
                 </svg>
               </button>
             </div>
-            <div className={styles.block}>
-              <div className={styles.list}>
-                <div className={styles.item}>
-                  <a className={styles.link} href="#">
-                    <Image
-                      className={styles.img}
-                      src="/img/playlist01.png"
-                      alt="day's playlist"
-                      width={250}
-                      height={150}
-                    />
-                  </a>
-                </div>
-                <div className={styles.item}>
-                  <a className={styles.link} href="#">
-                    <Image
-                      className={styles.img}
-                      src="/img/playlist02.png"
-                      alt="day's playlist"
-                      width={250}
-                      height={150}
-                    />
-                  </a>
-                </div>
-                <div className={styles.item}>
-                  <a className={styles.link} href="#">
-                    <Image
-                      className={styles.img}
-                      src="/img/playlist03.png"
-                      alt="day's playlist"
-                      width={250}
-                      height={150}
-                    />
-                  </a>
-                </div>
-              </div>
-            </div>
+            
+            <Collections />
           </div>
     )
 }

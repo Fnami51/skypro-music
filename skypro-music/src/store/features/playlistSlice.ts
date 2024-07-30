@@ -24,6 +24,7 @@ interface PlaylistState {
     playlist: Track[];
     currentTrack: Track | null;
     isShuffle: boolean;
+    isRepeat: boolean;
     shuffledPlaylist: Track[];
     isPlaying: boolean;
 }
@@ -32,6 +33,7 @@ const initialState: PlaylistState = {
     playlist: [],
     currentTrack: null,
     isShuffle: false,
+    isRepeat: false,
     shuffledPlaylist: [],
     isPlaying: false
 };
@@ -85,6 +87,9 @@ const playlistSlice = createSlice({
         setShuffle(state, action: PayloadAction<boolean>) {
             state.isShuffle = action.payload;
         },
+        setRepeat(state, action: PayloadAction<boolean>) {
+            state.isRepeat = action.payload;
+        },
         setCurrentTrack(state, action: PayloadAction<{
             currentTrack: Track,
             playlist: Track[]
@@ -97,5 +102,5 @@ const playlistSlice = createSlice({
     },
 });
 
-export const { setIsPlaying, setPlaylist, addTrack, removeTrack, playNextTrack, playPreviousTrack, setShuffle, setCurrentTrack } = playlistSlice.actions;
+export const { setIsPlaying, setPlaylist, addTrack, removeTrack, playNextTrack, playPreviousTrack, setShuffle, setRepeat, setCurrentTrack } = playlistSlice.actions;
 export const playlistReducer = playlistSlice.reducer;

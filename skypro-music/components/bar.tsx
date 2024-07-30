@@ -9,6 +9,7 @@ import {
   setShuffle,
   setCurrentTrack,
   setIsPlaying,
+  setRepeat,
 } from "../src/store/features/playlistSlice";
 import styles from "./style_components/bar.module.css";
 import classNames from "classnames";
@@ -21,8 +22,7 @@ export default function Soundbar() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   // const [isPlaying, setIsPlaying] = useState(false);
   const dispatch = useAppDispatch();
-  const { isShuffle, currentTrack, isPlaying, playlist } = useAppSelector((state) => state.playlist);
-  const [isRepeat, setIsRepeat] = useState(false);
+  const { isShuffle, isRepeat, currentTrack, isPlaying, playlist } = useAppSelector((state) => state.playlist);
   const {isClick} = useClickTrack()
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -43,16 +43,18 @@ export default function Soundbar() {
   };
 
   const handleEnded = useCallback(() => {
+    
+    dispatch(playNextTrack())
+    
+  }, []);
+
+  const handleRepeat = useCallback(() => {
     const audio = audioRef.current;
-    if (isRepeat) {
       if (audio) {
         audio.currentTime = 0;
         audio.play();
       }
-    } else {
-      dispatch(playNextTrack())
-    }
-  }, [dispatch]);
+  }, []);
 
   const handleTimeUpdate = useCallback(() => {
     setCurrentTime(audioRef.current?.currentTime ?? 0);
@@ -91,7 +93,7 @@ export default function Soundbar() {
 
     if (audio && playlist.length > 0 && currentTrack) {
       audio.src = currentTrack.track_file;
-      audio.addEventListener('ended', handleEnded);
+      audio.addEventListener('ended', (isRepeat? handleRepeat : handleEnded));
       audio.addEventListener('timeupdate', handleTimeUpdate);
       audio.addEventListener('loadedmetadata', handleLoadedMetadata);
 
@@ -105,12 +107,12 @@ export default function Soundbar() {
         // }
 
       return () => {
-        audio.removeEventListener('ended', handleEnded);
+        audio.removeEventListener('ended', (isRepeat? handleRepeat : handleEnded));
         audio.removeEventListener('timeupdate', handleTimeUpdate);
         audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       };
     }
-  }, [currentTrack]);
+  }, [currentTrack, isRepeat]);
 
   // useEffect(() => {
   //   togglePlay();
@@ -159,7 +161,7 @@ if (!currentTrack) {
                   <use xlinkHref="img/icon/sprite.svg#icon-next"></use>
                 </svg>
               </button>
-              <button className={classNames(styles.btnRepeat, styles.btnIcon)} onClick={() => setIsRepeat(!isRepeat)}>
+              <button className={classNames(styles.btnRepeat, styles.btnIcon)} onClick={() => dispatch(setRepeat(!isRepeat))}>
                 <svg className={classNames(styles.btnRepeatSvg, isRepeat? styles.btnActive : null)}>
                   <use xlinkHref={"img/icon/sprite.svg#icon-repeat"}></use>
                 </svg>

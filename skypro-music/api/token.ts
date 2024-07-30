@@ -1,5 +1,5 @@
-export function updateToken(refresh: string) {
-    fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
+export function updateToken(refresh: string | null) {
+    return fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
         method: "POST",
         body: JSON.stringify({
             refresh,
@@ -21,7 +21,7 @@ export function updateToken(refresh: string) {
 }
 
 export function getToken(email: string, password: string) {
-    fetch("https://webdev-music-003b5b991590.herokuapp.com/user/token/", {
+    return fetch("https://webdev-music-003b5b991590.herokuapp.com/user/token/", {
         method: "POST",
         body: JSON.stringify({
           email,
