@@ -69,16 +69,17 @@ export default function Track({track}: TrackProps) {
         console.log(trackDot)
         if (currentTrack) {
             if (currentTrack.id === id) {
-                setTrackDot({...trackDot, isSelect: true})
-                setTrackDot({...trackDot, isPulse: isPlaying})
+                setTrackDot(prevTrackDot => ({
+                    ...prevTrackDot,
+                    isSelect: true,
+                    isPulse: isPlaying,
+                }))
             } else {
-                setTrackDot({...trackDot, isSelect: false})
+                setTrackDot(prevTrackDot => ({
+                    ...prevTrackDot,
+                    isSelect: false,
+                }))
             }
-            // if (currentTrack.id === id && isPlaying) {
-            //     setTrackDot({...trackDot, isPulse: true})
-            // } else {
-            //     setTrackDot({...trackDot, isPulse: false})
-            // }
         }
     }, [currentTrack, isPlaying])
 

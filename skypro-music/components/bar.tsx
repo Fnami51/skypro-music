@@ -80,13 +80,6 @@ export default function Soundbar() {
     setCurrentTime(newTime);
   }, []);
 
-  // const handleTrackClick = useCallback(
-  //   () => {
-  //     dispatch(setCurrentTrack());
-  //     setIsPlaying(true);
-  //   },
-  //   [dispatch]
-  // );
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -96,15 +89,6 @@ export default function Soundbar() {
       audio.addEventListener('ended', (isRepeat? handleRepeat : handleEnded));
       audio.addEventListener('timeupdate', handleTimeUpdate);
       audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-
-      //dispatch(setIsPlaying(true))
-      // togglePlay()
-
-        // if (isPlaying) {
-        //  audio.pause();
-        // } else {
-       // audio.play();
-        // }
 
       return () => {
         audio.removeEventListener('ended', (isRepeat? handleRepeat : handleEnded));
