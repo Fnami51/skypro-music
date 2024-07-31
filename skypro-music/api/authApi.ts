@@ -1,7 +1,7 @@
 import { getToken } from "./token";
 
 export function toSignUp(email: string, password: string) {
-        fetch("https://webdev-music-003b5b991590.herokuapp.com/user/signup/", {
+      return  fetch("https://webdev-music-003b5b991590.herokuapp.com/user/signup/", {
             method: "POST",
             body: JSON.stringify({
               email,
@@ -12,15 +12,13 @@ export function toSignUp(email: string, password: string) {
               "content-type": "application/json",
             },
           })
-            .then((response) => response.json())
-            .then((json) => {
-                console.log(json)
-                toLogIn(email, password)
-            });
+            .then((response) => {
+              return response.json()}
+            )
 }
 
 export function toLogIn(email: string, password: string) {
-    fetch("https://webdev-music-003b5b991590.herokuapp.com/user/login/", {
+    return fetch("https://webdev-music-003b5b991590.herokuapp.com/user/login/", {
         method: "POST",
         body: JSON.stringify({
           email,
@@ -30,9 +28,7 @@ export function toLogIn(email: string, password: string) {
           "content-type": "application/json",
         },
       })
-        .then((response) => response.json())
-        .then((json) => {
-            sessionStorage.setItem("name", json.username)
-            getToken(email, password)
+        .then((response) => {
+          return response.json()
         });
 }

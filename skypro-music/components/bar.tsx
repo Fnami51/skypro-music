@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../src/store/store";
 import {
   playNextTrack,
@@ -13,17 +12,13 @@ import {
 } from "../src/store/features/playlistSlice";
 import styles from "./style_components/bar.module.css";
 import classNames from "classnames";
-import useTracks from "../context/TracksHooks";
 import { useAppSelector } from "../src/store/store";
 import Progress from "./progress";
-import { useClickTrack } from "../context/ClickTrackContext";
 
 export default function Soundbar() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  // const [isPlaying, setIsPlaying] = useState(false);
   const dispatch = useAppDispatch();
   const { isShuffle, isRepeat, currentTrack, isPlaying, playlist } = useAppSelector((state) => state.playlist);
-  const {isClick} = useClickTrack()
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
@@ -80,27 +75,33 @@ export default function Soundbar() {
     setCurrentTime(newTime);
   }, []);
 
-
   useEffect(() => {
     const audio = audioRef.current;
-
+  
     if (audio && playlist.length > 0 && currentTrack) {
       audio.src = currentTrack.track_file;
-      audio.addEventListener('ended', (isRepeat? handleRepeat : handleEnded));
       audio.addEventListener('timeupdate', handleTimeUpdate);
       audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-
+  
       return () => {
-        audio.removeEventListener('ended', (isRepeat? handleRepeat : handleEnded));
         audio.removeEventListener('timeupdate', handleTimeUpdate);
         audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       };
     }
-  }, [currentTrack, isRepeat]);
+  }, [currentTrack]);
 
-  // useEffect(() => {
-  //   togglePlay();
-  // }, [isClick]);
+  useEffect(() => {
+    const audio = audioRef.current;
+  
+    if (audio) {
+      const handleEnd = isRepeat ? handleRepeat : handleEnded;
+      audio.addEventListener('ended', handleEnd);
+  
+      return () => {
+        audio.removeEventListener('ended', handleEnd);
+      };
+    }
+  }, [isRepeat]);
 
 if (!currentTrack) {
   return null

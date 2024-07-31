@@ -8,15 +8,36 @@ import Link from "next/link";
 import { useState } from "react";
 import { toLogIn } from "../../../api/authApi";
 import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setAccessToken, setRefreshToken, setUser } from "@/store/features/favoriteSlice";
+import { getToken } from "../../../api/token";
+
+interface User {
+  email: string;
+  username: string;
+  _id: number; 
+}
+
+interface Token {
+  access: string;
+  refresh: string;
+}
 
 export default function Home() {
   const navigate = useRouter()
+  
+  const dispatch = useAppDispatch();
+  const { user, refresh, access } = useAppSelector((state) => state.favorite);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleClick() {
+  async function handleClick() {
     try {
-      toLogIn(email, password);
+      const userFromApi: User = await toLogIn(email, password)
+      dispatch(setUser(userFromApi))
+      const tokens: Token = await getToken(email, password)
+      dispatch(setAccessToken(tokens.access))
+      dispatch(setRefreshToken(tokens.refresh))
       navigate.push('/')
     } catch (error) {
       console.log(error)

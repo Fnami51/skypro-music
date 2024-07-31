@@ -5,20 +5,22 @@ import styles from "./style_components/sidebar.module.css"
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Collections from "./sets";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setUser } from "@/store/features/favoriteSlice";
 
 export default function Sidebar() {
   const navigate = useRouter()
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.favorite);
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const name = sessionStorage.getItem("name");
-      setUserName(name ? String(name) : null);
-    }
-  }, []);
+    const name = user.username;
+    setUserName(name ? String(name) : null);
+  }, [user]);
 
   function goToExit() {
-    sessionStorage.clear()
+    dispatch(setUser({_id: 0, email: "", username: ""}))
     navigate.push('/login')
   }
 

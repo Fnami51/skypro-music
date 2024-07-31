@@ -5,11 +5,32 @@ import styles from "../page.module.css";
 import signupStyle from "./signup.module.css"
 import classNames from "classnames";
 import { useState } from "react";
-import { toSignUp } from "../../../api/authApi";
+import { toLogIn, toSignUp } from "../../../api/authApi";
 import { getToken } from "../../../api/token";
 import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setAccessToken, setRefreshToken, setUser } from "@/store/features/favoriteSlice";
+
+interface User {
+  email: string;
+  username: string;
+  _id: number; 
+}
+
+interface Token {
+  access: string;
+  refresh: string;
+}
+
+interface SignUp {
+  message: string;
+  result: User;
+  success: boolean;
+}
 
 export default function Home() {
+  const dispatch = useAppDispatch();
+  const { user, refresh, access } = useAppSelector((state) => state.favorite);
   const navigate = useRouter()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +42,14 @@ export default function Home() {
       return;
     }
     try {
-      toSignUp(email, password);
-      navigate.push('/')
+      const complate: SignUp = await toSignUp(email, password)
+      dispatch(setUser(complate.result))
+      const tokens: Token = await getToken(email, password)
+      dispatch(setAccessToken(tokens.access))
+      dispatch(setRefreshToken(tokens.refresh))
+      navigate.push('/')      
     } catch (error) {
-      console.log(error)
+      console.log(error)   
     }
   }
 

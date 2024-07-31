@@ -4,11 +4,12 @@ import Image from "next/image"
 import styles from "./style_components/centerblock.module.css"
 import Track from "./track"
 import classNames from "classnames"
-import { getTracks } from "../api/tracksApi";
+import { getFavoriteTracks, getTracks } from "../api/tracksApi";
 import { useEffect, useState } from "react";
-import useTracks from "../context/TracksHooks";
 import { setPlaylist as setPlaylistAction } from "@/store/features/playlistSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
+import { updateToken } from "../api/token";
+import { setAccessToken } from "@/store/features/favoriteSlice";
 
 interface User {
   id: number;
@@ -32,21 +33,25 @@ interface Track {
 
 export default function Centerblock() {
   const dispatch = useAppDispatch();
+  const { refresh, isFavoritePlaylist, access } = useAppSelector((state) => state.favorite);
   const { playlist } = useAppSelector((state) => state.playlist);
   const [filter, setFilter] = useState<number>(0)
 
   useEffect(() => {
     async function requestInApi() {
-      
-      const answerFromApi: Track[] = await getTracks(/*token*/);
 
-      console.log(answerFromApi)
-
-      dispatch(setPlaylistAction(answerFromApi))
+      if (isFavoritePlaylist) {
+        const answerFromApi: Track[] = await getFavoriteTracks(access, refresh);  
+        dispatch(setPlaylistAction(answerFromApi))
+      } else {
+        const answerFromApi: Track[] = await getTracks()
+        console.log(answerFromApi) // отладка
+        dispatch(setPlaylistAction(answerFromApi))
+      }
     }
 
     requestInApi();
-  }, [dispatch])
+  }, [isFavoritePlaylist])
 
   const filteredAuthors: string[] = playlist
   .map(track => track.author)

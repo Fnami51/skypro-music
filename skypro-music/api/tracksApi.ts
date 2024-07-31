@@ -1,3 +1,5 @@
+import { updateToken } from "./token";
+
 interface User {
     id: number;
     username: string;
@@ -50,7 +52,7 @@ export async function getTracks(/*token: string*/): Promise<Track[]>{
     return result.json();
 }
 
-export async function getFavoriteTracks(access: string): Promise<Track[]>{
+export async function getFavoriteTracks(access: string, refresh: string): Promise<Track[]>{
     const result = await fetch('https://webdev-music-003b5b991590.herokuapp.com/catalog/track/favorite/all/', {
         method: "GET",
         headers: {
@@ -59,6 +61,10 @@ export async function getFavoriteTracks(access: string): Promise<Track[]>{
     });
     if (!result.ok) {
         console.error('Error Api', result.status);
+        if (result.status === 401) {
+            const token: string = await updateToken(refresh)
+            getFavoriteTracks(token, refresh)
+        }
     };
     return result.json();
 }

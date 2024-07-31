@@ -6,7 +6,6 @@ import dot from "./style_components/dot.module.css"
 import classNames from "classnames";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setCurrentTrack } from "@/store/features/playlistSlice";
-import { useClickTrack } from "../context/ClickTrackContext";
 import { updateToken } from "../api/token";
 import { useEffect, useState } from "react";
 import { addFavotite } from "../api/favoriteApi";
@@ -39,18 +38,16 @@ interface TrackProps {
 export default function Track({track}: TrackProps) {
     const dispatch = useAppDispatch();
     const {playlist, currentTrack, isPlaying} = useAppSelector(state => state.playlist)
-    const {isLike} = useAppSelector(state => state.favorite)
+    const {isLike, access, refresh} = useAppSelector(state => state.favorite)
     const {id, name, author, release_date, genre, duration_in_seconds, logo, track_file, started_user} = track;
     const formatDuration = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     }
-    const {setClickTrack} = useClickTrack()
     const [trackDot, setTrackDot] = useState({isPulse: false, isSelect: false})
 
     function headleClick() {
-        setClickTrack()
         dispatch(setCurrentTrack({
             currentTrack: track,
             playlist

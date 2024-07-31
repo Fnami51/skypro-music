@@ -30,7 +30,4 @@ export function getToken(email: string, password: string) {
           if (response.status === 401) {
               throw new Error ("Error auth")
           }
-          return response.json()})
-          .then((data) => {
-            return data.refresh});
-}
+          return response.json()})}
