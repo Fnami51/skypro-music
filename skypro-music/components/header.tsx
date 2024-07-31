@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { setFavoritePlaylist, setUser } from "@/store/features/favoriteSlice";
+import { setAccessToken, setFavoritePlaylist, setRefreshToken, setUser } from "@/store/features/favoriteSlice";
 
 export default function Header() {
   const navigate = useRouter()
@@ -26,6 +26,8 @@ export default function Header() {
 
   function goToExit() {
     dispatch(setUser({_id: 0, email: "", username: ""}))
+    dispatch(setAccessToken(""))
+    dispatch(setRefreshToken(""))
     dispatch(setFavoritePlaylist(false))
     navigate.push('/login')
   }
@@ -34,6 +36,7 @@ export default function Header() {
       if (user) {
         dispatch(setFavoritePlaylist(true))
       } else {
+        alert("Вы не зарегестрированы. Зарегестрируйтесь пожалуста")
         goToExit()
       }
   }

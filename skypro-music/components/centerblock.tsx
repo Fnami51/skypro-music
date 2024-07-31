@@ -34,6 +34,7 @@ interface Track {
 export default function Centerblock() {
   const dispatch = useAppDispatch();
   const { refresh, isFavoritePlaylist, access } = useAppSelector((state) => state.favorite);
+  const { authors, genres } = useAppSelector((state) => state.filter);
   const { playlist } = useAppSelector((state) => state.playlist);
   const [filter, setFilter] = useState<number>(0)
 
@@ -72,6 +73,11 @@ export default function Centerblock() {
       setFilter(0)
     }
   } 
+
+  /* useEffect(() => {Фильтровать плайлист
+  const newPlaylist: Track[] = playlist.filter((track) => track.genre === genres[0])
+  dispatch(setPlaylistAction(answerFromApi)
+  }, [authors, geners]) */
 
   return (
     <div className={styles.background}>

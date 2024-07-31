@@ -9,7 +9,7 @@ interface User {
 interface PlaylistState {
     access: string;
     refresh: string;
-    isLike: boolean;
+    isLiked: number[];
     user: User;
     isFavoritePlaylist: boolean;
 }
@@ -17,7 +17,7 @@ interface PlaylistState {
 const initialState: PlaylistState = {
     access: "",
     refresh: "",
-    isLike: false,
+    isLiked: [],
     user: {
         email: "",
         username: "",
@@ -36,8 +36,8 @@ const favoriteSlice = createSlice({
         setRefreshToken(state, action: PayloadAction<string>){
             state.access = action.payload
         },
-        setLike(state, action: PayloadAction<boolean>){
-            state.isLike = action.payload
+        setLike(state, action: PayloadAction<number[]>){
+            state.isLiked = action.payload
         },
         setUser(state, action: PayloadAction<User>){
             state.user = action.payload

@@ -34,8 +34,10 @@ export default function Home() {
   async function handleClick() {
     try {
       const userFromApi: User = await toLogIn(email, password)
+      console.log(userFromApi)
       dispatch(setUser(userFromApi))
       const tokens: Token = await getToken(email, password)
+      console.log(tokens)
       dispatch(setAccessToken(tokens.access))
       dispatch(setRefreshToken(tokens.refresh))
       navigate.push('/')

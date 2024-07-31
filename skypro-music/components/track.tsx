@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setCurrentTrack } from "@/store/features/playlistSlice";
 import { updateToken } from "../api/token";
 import { useEffect, useState } from "react";
-import { addFavotite } from "../api/favoriteApi";
+import { addFavotite, deleteFavotite } from "../api/favoriteApi";
 import { setLike } from "@/store/features/favoriteSlice";
 
 interface User {
@@ -38,7 +38,7 @@ interface TrackProps {
 export default function Track({track}: TrackProps) {
     const dispatch = useAppDispatch();
     const {playlist, currentTrack, isPlaying} = useAppSelector(state => state.playlist)
-    const {isLike, access, refresh} = useAppSelector(state => state.favorite)
+    const {isLiked, access, refresh, user} = useAppSelector(state => state.favorite)
     const {id, name, author, release_date, genre, duration_in_seconds, logo, track_file, started_user} = track;
     const formatDuration = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -54,9 +54,24 @@ export default function Track({track}: TrackProps) {
         }))
     }
 
-    function sendLike() {
-        addFavotite(access, id).then((result) => {
-            dispatch(setLike(!isLike))
+    async function sendLike() {
+        console.log(access)
+        addFavotite(access, id, refresh).then((result) => {
+            const updatedLikes = isLiked.includes(id) 
+                ? isLiked.filter(likeId => likeId !== id)
+                : [...isLiked, id];
+            dispatch(setLike(updatedLikes));
+            console.log(result)
+        })
+    } 
+
+    async function sendDislike() {
+        console.log(access)
+        deleteFavotite(access, id, refresh).then((result) => {
+            const updatedLikes = isLiked.includes(id) 
+                ? isLiked.filter(likeId => likeId !== id)
+                : [...isLiked, id];
+            dispatch(setLike(updatedLikes));
             console.log(result)
         })
     } 
@@ -77,6 +92,15 @@ export default function Track({track}: TrackProps) {
             }
         }
     }, [currentTrack, isPlaying])
+
+    function findLike() {
+        const foundId: number | undefined = isLiked.find(element => element === id);
+        if (foundId) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     return (
         <div className={styles.background}>
@@ -105,12 +129,19 @@ export default function Track({track}: TrackProps) {
                 </div>
                 <div className={styles.column4}>
                     
-                    <button className={styles.btnLike} onClick={sendLike}>
-                    <svg className={classNames(styles.timeSvg, isLike ? styles.active : null)}>
+                    {findLike() ? (
+                        <button className={styles.btnLike} onClick={sendDislike}>
+                        <svg className={classNames(styles.timeSvg, styles.active)}>
+                            <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
+                        </svg>
+                        </button>
+                    ) : (
+                        <button className={styles.btnLike} onClick={sendLike}>
+                    <svg className={classNames(styles.timeSvg, findLike() ? styles.active : null)}>
                         <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
                     </svg>
                     </button>
-
+                    )}
 
                     <span className={styles.timeText}>{formatDuration(duration_in_seconds)}</span>
                 </div>

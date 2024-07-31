@@ -57,6 +57,7 @@ export async function getFavoriteTracks(access: string, refresh: string): Promis
         method: "GET",
         headers: {
             Authorization: `Bearer ${access}`,
+            
         }
     });
     if (!result.ok) {

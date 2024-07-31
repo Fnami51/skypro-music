@@ -101,7 +101,7 @@ export default function Soundbar() {
         audio.removeEventListener('ended', handleEnd);
       };
     }
-  }, [isRepeat]);
+  }, [isRepeat, currentTrack]);
 
 if (!currentTrack) {
   return null
