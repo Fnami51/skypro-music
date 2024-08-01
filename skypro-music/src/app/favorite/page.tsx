@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import styles from "./page.module.css";
 
@@ -6,8 +8,10 @@ import Centerblock from "../../../components/centerblock";
 import Sidebar from "../../../components/sidebar";
 import Soundbar from "../../../components/bar";
 import { getTracks } from "../../../api/tracksApi";
-import { useAppSelector } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { fetchFavoriteTracks } from "../../../api/tracksApi";
+import { setPlaylist } from "@/store/features/playlistSlice";
+import { useEffect } from "react";
 
 interface User {
   id: number;
@@ -29,16 +33,22 @@ interface Track {
   started_user: User[];
 }
 
-export default async function Home() {
-  async function requestInApi() {
+export default function Home() {
+  const dispatch = useAppDispatch();
+  const {access, refresh} = useAppSelector(state => state.favorite)
+  const { playlist } = useAppSelector((state) => state.playlist);
+  useEffect(() => {
+    fetchFavoriteTracks(access, refresh)
+    .then((answerFromApi) => {
+      console.log(answerFromApi.data); // отладка
+      dispatch(setPlaylist(answerFromApi.data));
+    })
+    .catch((error) => {
+      console.error("Error fetching favorite tracks:", error);
+    });
+  }, [])
 
-      const answerFromApi: Track[] = await fetchFavoriteTracks()
-      console.log(answerFromApi) // отладка
-      //dispatch(setPlaylistAction(answerFromApi))
-      return answerFromApi
-  }
-
-  const tracks: Track[] = await requestInApi();
+  const tracks: Track[] = playlist;
 
   return (
     <div className={styles.wrapper}>
