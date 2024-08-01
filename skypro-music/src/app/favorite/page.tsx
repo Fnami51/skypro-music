@@ -1,11 +1,13 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 
-import Header from "../../components/header";
-import Centerblock from "../../components/centerblock";
-import Sidebar from "../../components/sidebar";
-import Soundbar from "../../components/bar";
-import { getTracks } from "../../api/tracksApi";
+import Header from "../../../components/header";
+import Centerblock from "../../../components/centerblock";
+import Sidebar from "../../../components/sidebar";
+import Soundbar from "../../../components/bar";
+import { getTracks } from "../../../api/tracksApi";
+import { useAppSelector } from "@/store/store";
+import { fetchFavoriteTracks } from "../../../api/tracksApi";
 
 interface User {
   id: number;
@@ -30,7 +32,7 @@ interface Track {
 export default async function Home() {
   async function requestInApi() {
 
-      const answerFromApi: Track[] = await getTracks()
+      const answerFromApi: Track[] = await fetchFavoriteTracks()
       console.log(answerFromApi) // отладка
       //dispatch(setPlaylistAction(answerFromApi))
       return answerFromApi

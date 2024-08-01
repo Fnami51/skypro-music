@@ -1,11 +1,11 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 
-import Header from "../../components/header";
-import Centerblock from "../../components/centerblock";
-import Sidebar from "../../components/sidebar";
-import Soundbar from "../../components/bar";
-import { getTracks } from "../../api/tracksApi";
+import Header from "../../../../components/header";
+import Centerblock from "../../../../components/centerblock";
+import Sidebar from "../../../../components/sidebar";
+import Soundbar from "../../../../components/bar";
+import { getTracks } from "../../../../api/tracksApi";
 
 interface User {
   id: number;
@@ -45,7 +45,7 @@ export default async function Home() {
          
           <Header />
 
-          <Centerblock playlist={tracks}/>
+          <Centerblock playlist={tracks.filter((track) => track.genre === "Рок музыка")}/>
 
           <Sidebar />
 

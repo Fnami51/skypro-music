@@ -266,16 +266,9 @@
     stroke: #696969;
 }
 
-.dislike{
-    padding: 5px;
-    margin-left: 28.5px;
-}
-
-.dislikeSvg{
-    width: 14.34px;
-    height: 13px;
-    fill: transparent;
-    stroke: #696969;
+.activeLike{
+  fill: #B672FF;
+  stroke: #B672FF;
 }
 
 /*Volume*/

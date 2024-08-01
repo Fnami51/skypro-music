@@ -2,16 +2,17 @@ import Image from "next/image"
 import styles from "./style_components/sidebar.module.css"
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { getFirstSet, getSecondSet, getThirdSet } from "@/store/features/filterSlice";
+import Link from "next/link";
 
 export default function Collections() {
   const dispatch = useAppDispatch();
-
+// Сделать ссылками на страницу колекций и там фильтровать 
 
     return (
         <div className={styles.block}>
               <div className={styles.list}>
                 <div className={styles.item}>
-                  <button className={styles.link} onClick={() => dispatch(getFirstSet())}>
+                  <Link className={styles.link} href={"/collection/today"}>
                     <Image
                       className={styles.img}
                       src="/img/playlist01.png"
@@ -19,10 +20,10 @@ export default function Collections() {
                       width={250}
                       height={150}
                     />
-                  </button>
+                  </Link>
                 </div>
                 <div className={styles.item}>
-                  <button className={styles.link} onClick={() => dispatch(getSecondSet())}>
+                  <Link className={styles.link} href={"/collection/hits"}>
                     <Image
                       className={styles.img}
                       src="/img/playlist02.png"
@@ -30,10 +31,10 @@ export default function Collections() {
                       width={250}
                       height={150}
                     />
-                  </button>
+                  </Link>
                 </div>
                 <div className={styles.item}>
-                  <button className={styles.link} onClick={() => dispatch(getThirdSet())}>
+                  <Link className={styles.link} href={"/collection/indi-power"}>
                     <Image
                       className={styles.img}
                       src="/img/playlist03.png"
@@ -41,7 +42,7 @@ export default function Collections() {
                       width={250}
                       height={150}
                     />
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -33,11 +33,12 @@ interface Track {
 
 interface TrackProps {
   track: Track
+  playlist: Track[]
 }
 
-export default function Track({track}: TrackProps) {
+export default function Track({track, playlist}: TrackProps) {
     const dispatch = useAppDispatch();
-    const {playlist, currentTrack, isPlaying} = useAppSelector(state => state.playlist)
+    const {/*playlist*/ currentTrack, isPlaying} = useAppSelector(state => state.playlist)
     const {isLiked, access, refresh, user} = useAppSelector(state => state.favorite)
     const {id, name, author, release_date, genre, duration_in_seconds, logo, track_file, started_user} = track;
     const formatDuration = (seconds: number) => {
@@ -55,6 +56,9 @@ export default function Track({track}: TrackProps) {
     }
 
     async function sendLike() {
+        if (!refresh && !access) {
+            return alert("Сначало войдите")
+        }
         console.log(access)
         addFavotite(access, id, refresh).then((result) => {
             const updatedLikes = isLiked.includes(id) 
@@ -66,6 +70,9 @@ export default function Track({track}: TrackProps) {
     } 
 
     async function sendDislike() {
+        if (!refresh && !access) {
+            return alert("Сначало войдите")
+        }
         console.log(access)
         deleteFavotite(access, id, refresh).then((result) => {
             const updatedLikes = isLiked.includes(id) 
@@ -91,10 +98,10 @@ export default function Track({track}: TrackProps) {
                 }))
             }
         }
-    }, [currentTrack, isPlaying])
+    }, [currentTrack, id, isPlaying])
 
     function findLike() {
-        const foundId: number | undefined = isLiked.find(element => element === id);
+        const foundId: number | undefined = isLiked.find(trackId => trackId === id);
         if (foundId) {
             return true;
         } else {

@@ -1,4 +1,4 @@
-import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
     id: number;
@@ -37,6 +37,8 @@ const initialState: PlaylistState = {
     shuffledPlaylist: [],
     isPlaying: false
 };
+
+
 
 const playlistSlice = createSlice({
     name: 'playlist',
@@ -96,8 +98,10 @@ const playlistSlice = createSlice({
             state.currentTrack = action.payload.currentTrack;
             state.playlist = action.payload.playlist;
             state.shuffledPlaylist = [...action.payload.playlist].sort(() => 0.5 - Math.random())
-        }
+        },
+
     },
+    
 });
 
 export const { setIsPlaying, setPlaylist, addTrack, removeTrack, playNextTrack, playPreviousTrack, setShuffle, setRepeat, setCurrentTrack } = playlistSlice.actions;

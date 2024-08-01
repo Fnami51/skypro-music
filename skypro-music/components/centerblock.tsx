@@ -4,7 +4,6 @@ import Image from "next/image"
 import styles from "./style_components/centerblock.module.css"
 import Track from "./track"
 import classNames from "classnames"
-import { getFavoriteTracks, getTracks } from "../api/tracksApi";
 import { useEffect, useState } from "react";
 import { setPlaylist as setPlaylistAction } from "@/store/features/playlistSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
@@ -31,28 +30,16 @@ interface Track {
   started_user: User[];
 }
 
-export default function Centerblock() {
+interface CenterblockProps {
+  playlist: Track[];
+}
+
+export default function Centerblock({playlist}: CenterblockProps) {
   const dispatch = useAppDispatch();
   const { refresh, isFavoritePlaylist, access } = useAppSelector((state) => state.favorite);
   const { authors, genres } = useAppSelector((state) => state.filter);
-  const { playlist } = useAppSelector((state) => state.playlist);
+  //const { playlist } = useAppSelector((state) => state.playlist);
   const [filter, setFilter] = useState<number>(0)
-
-  useEffect(() => {
-    async function requestInApi() {
-
-      if (isFavoritePlaylist) {
-        const answerFromApi: Track[] = await getFavoriteTracks(access, refresh);  
-        dispatch(setPlaylistAction(answerFromApi))
-      } else {
-        const answerFromApi: Track[] = await getTracks()
-        console.log(answerFromApi) // отладка
-        dispatch(setPlaylistAction(answerFromApi))
-      }
-    }
-
-    requestInApi();
-  }, [isFavoritePlaylist])
 
   const filteredAuthors: string[] = playlist
   .map(track => track.author)
@@ -73,6 +60,14 @@ export default function Centerblock() {
       setFilter(0)
     }
   } 
+
+  /*function searchTracksByName(partOfName: string, tracks: Track[]): Track[] {
+    const lowerCasePart = partOfName.toLowerCase();
+  
+    return tracks.filter(track =>
+      track.name.toLowerCase().includes(lowerCasePart)
+    );
+  }*/
 
   /* useEffect(() => {Фильтровать плайлист
   const newPlaylist: Track[] = playlist.filter((track) => track.genre === genres[0])
@@ -162,7 +157,7 @@ export default function Centerblock() {
         </div>
         <div className={styles.playlist}>
           {playlist.map(track => (
-            <Track key={track.id} track={track} />
+            <Track key={track.id} track={track} playlist={playlist}/>
           ))}
         </div>
       </div>

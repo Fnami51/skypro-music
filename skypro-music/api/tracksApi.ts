@@ -21,25 +21,6 @@ interface User {
   }
 
 export async function getTracks(/*token: string*/): Promise<Track[]>{
-    /*const key = await fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
-        method: "POST",
-        body: JSON.stringify({
-            refresh: token,
-        }),
-          headers: {
-            "content-type": "application/json",
-          },
-    }).then((response) => {
-        if (response.ok) {
-            return response.json()
-            
-        } else {
-            console.error('Token error', response.status);
-        };
-    }).then((data) => {
-        return data.access
-    });*/
-
     const result = await fetch('https://skypro-music-api.skyeng.tech/catalog/track/all/', {
         method: "GET",
         /*headers: {
@@ -52,7 +33,7 @@ export async function getTracks(/*token: string*/): Promise<Track[]>{
     return result.json();
 }
 
-export async function getFavoriteTracks(access: string, refresh: string): Promise<Track[]>{
+export async function fetchFavoriteTracks(access: string, refresh: string){
     const result = await fetch('https://webdev-music-003b5b991590.herokuapp.com/catalog/track/favorite/all/', {
         method: "GET",
         headers: {
@@ -64,7 +45,7 @@ export async function getFavoriteTracks(access: string, refresh: string): Promis
         console.error('Error Api', result.status);
         if (result.status === 401) {
             const token: string = await updateToken(refresh)
-            getFavoriteTracks(token, refresh)
+            fetchFavoriteTracks(token, refresh)
         }
     };
     return result.json();

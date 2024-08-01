@@ -14,10 +14,13 @@ import styles from "./style_components/bar.module.css";
 import classNames from "classnames";
 import { useAppSelector } from "../src/store/store";
 import Progress from "./progress";
+import { addFavotite, deleteFavotite } from "../api/favoriteApi";
+import { setLike } from "@/store/features/favoriteSlice";
 
 export default function Soundbar() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const dispatch = useAppDispatch();
+  const {isLiked, access, refresh, user} = useAppSelector(state => state.favorite)
   const { isShuffle, isRepeat, currentTrack, isPlaying, playlist } = useAppSelector((state) => state.playlist);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -107,6 +110,43 @@ if (!currentTrack) {
   return null
 }
 
+async function sendLike(id: number) {
+  if (!refresh && !access) {
+      return alert("Сначало войдите")
+  }
+  console.log(access)
+  addFavotite(access, id, refresh).then((result) => {
+      const updatedLikes = isLiked.includes(id) 
+          ? isLiked.filter(likeId => likeId !== id)
+          : [...isLiked, id];
+      dispatch(setLike(updatedLikes));
+      console.log(result)
+  })
+} 
+
+async function sendDislike(id: number) {
+  if (!refresh && !access) {
+      return alert("Сначало войдите")
+  }
+  console.log(access)
+  deleteFavotite(access, id, refresh).then((result) => {
+      const updatedLikes = isLiked.includes(id) 
+          ? isLiked.filter(likeId => likeId !== id)
+          : [...isLiked, id];
+      dispatch(setLike(updatedLikes));
+      console.log(result)
+  })
+}
+
+function findLike(id: number) {
+  const foundId: number | undefined = isLiked.find(trackId => trackId === id);
+  if (foundId) {
+      return true;
+  } else {
+      return false;
+  }
+}
+
   return (
     <div className={styles.background}>
       <div className={styles.content}>
@@ -178,16 +218,19 @@ if (!currentTrack) {
                 </div>
 
                 <div className={styles.likes}>
-                <button className={classNames(styles.like, styles.btnIcon)}>
-                  <svg className={styles.likeSvg}>
-                    <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
-                  </svg>
-                </button>
-                {/* <div className={classNames(styles.dislike, styles.btnIcon)}>
-                  <svg className={styles.dislikeSvg}>
-                    <use xlinkHref="img/icon/sprite.svg#icon-dislike"></use>
-                  </svg>
-                </div> */}
+                {findLike(currentTrack.id) ? (
+                        <button className={classNames(styles.like, styles.btnIcon)} onClick={() => sendDislike(currentTrack.id)}>
+                        <svg className={classNames(styles.likeSvg, styles.activeLike)}>
+                            <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
+                        </svg>
+                        </button>
+                    ) : (
+                        <button className={classNames(styles.like, styles.btnIcon)} onClick={() => sendLike(currentTrack.id)}>
+                    <svg className={classNames(styles.likeSvg, findLike(currentTrack.id) ? styles.activeLike : null)}>
+                        <use xlinkHref="img/icon/sprite.svg#icon-like"></use>
+                    </svg>
+                    </button>
+                    )}
                 </div>
               </div>
 

@@ -7,17 +7,14 @@ import { useRouter } from "next/navigation";
 import Collections from "./sets";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setUser } from "@/store/features/favoriteSlice";
+import { useInitialLikeTracks } from "@/hooks/useInitialLikeTracks";
 
 export default function Sidebar() {
   const navigate = useRouter()
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.favorite);
-  const [userName, setUserName] = useState<string | null>(null);
 
-  useEffect(() => {
-    const name = user.username;
-    setUserName(name ? String(name) : null);
-  }, [user]);
+  useInitialLikeTracks()
 
   function goToExit() {
     dispatch(setUser({_id: 0, email: "", username: ""}))
@@ -27,7 +24,7 @@ export default function Sidebar() {
     return (
         <div className={styles.background}>
             <div className={styles.user}>
-              <p className={styles.userName}>{userName}</p>
+              <p className={styles.userName}>{user.username}</p>
               <button className={styles.icon} onClick={goToExit}>
                 <svg>
                   <use xlinkHref="img/icon/sprite.svg#logout"></use>

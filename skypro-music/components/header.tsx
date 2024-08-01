@@ -13,12 +13,7 @@ export default function Header() {
   const dispatch = useAppDispatch();
   const { user, isFavoritePlaylist } = useAppSelector((state) => state.favorite);
   const [isOpenMenu, setIsOpenMenu] = React.useState<boolean>(true);
-  const [userName, setUserName] = useState<string | null>(null);
 
-  useEffect(() => {
-    const name = user.username
-    setUserName(name ? String(name) : null);
-  }, [user]);
 
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = () => { 
     setIsOpenMenu(!isOpenMenu);
@@ -66,11 +61,13 @@ export default function Header() {
                 <li className={styles.item}>
                   <button className={styles.link} onClick={handleMain}>Главное</button>
                 </li>
+                {user.username? (
                 <li className={styles.item}>
-                  <button className={styles.link} onClick={handleFavorite}>Мой плейлист</button>
+                  <Link className={styles.link} href={"/favorite"}>Мой плейлист</Link>
                 </li>
+                ) : null}
                 <li className={styles.item}>
-                  <button className={styles.link} onClick={goToExit}>{userName?"Выйти":"Войти"}</button>
+                  <button className={styles.link} onClick={goToExit}>{user.username?"Выйти":"Войти"}</button>
                 </li>
               </ul>
             </div>) : null }
