@@ -11,7 +11,7 @@ import { setAccessToken, setFavoritePlaylist, setRefreshToken, setUser } from "@
 export default function Header() {
   const navigate = useRouter()
   const dispatch = useAppDispatch();
-  const { user, isFavoritePlaylist } = useAppSelector((state) => state.favorite);
+  const { user } = useAppSelector((state) => state.favorite);
   const [isOpenMenu, setIsOpenMenu] = React.useState<boolean>(true);
 
 
@@ -25,19 +25,6 @@ export default function Header() {
     dispatch(setRefreshToken(""))
     dispatch(setFavoritePlaylist(false))
     navigate.push('/login')
-  }
-
-  function handleFavorite() {
-      if (user) {
-        dispatch(setFavoritePlaylist(true))
-      } else {
-        alert("Вы не зарегестрированы. Зарегестрируйтесь пожалуста")
-        goToExit()
-      }
-  }
-
-  function handleMain() {
-        dispatch(setFavoritePlaylist(false))
   }
 
     return (
@@ -59,7 +46,7 @@ export default function Header() {
             {isOpenMenu ? (<div className={styles.menu}>
               <ul className={styles.list}>
                 <li className={styles.item}>
-                  <button className={styles.link} onClick={handleMain}>Главное</button>
+                  <Link className={styles.link} href={"/"}>Главное</Link>
                 </li>
                 {user.username? (
                 <li className={styles.item}>
