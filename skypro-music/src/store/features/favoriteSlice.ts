@@ -7,25 +7,7 @@ interface User {
     _id: number; 
 }
 
-interface Users {
-    _id: number;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-}
-
-interface Track {
-    _id: number;
-    name: string;
-    author: string;
-    release_date: string;
-    genre: string;
-    duration_in_seconds: number;
-    logo: string;
-    track_file: string;
-    started_user: Users[];
-}
+import {Track} from '@interface/tracksInterface';
 
 interface PlaylistState {
     access: string;
@@ -76,7 +58,7 @@ const favoriteSlice = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(getFavotiteTracks.fulfilled, (state, action) => {
-            state.isLiked = action.payload.map((track: Track) => track._id)
+            state.isLiked = action.payload.map((track: Track) => track.id)
         })
     }
 });

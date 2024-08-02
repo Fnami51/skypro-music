@@ -13,25 +13,7 @@ import { fetchFavoriteTracks } from "../../../api/tracksApi";
 import { setPlaylist } from "@/store/features/playlistSlice";
 import { useEffect } from "react";
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-}
-
-interface Track {
-  id: number;
-  name: string;
-  author: string;
-  release_date: string;
-  genre: string;
-  duration_in_seconds: number;
-  logo: string;
-  track_file: string;
-  started_user: User[];
-}
+import {Track} from '@interface/tracksInterface';
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -46,7 +28,7 @@ export default function Home() {
     .catch((error) => {
       console.error("Error fetching favorite tracks:", error);
     });
-  }, [])
+  }, [access, dispatch, refresh])
 
   const tracks: Track[] = playlist;
 
@@ -57,7 +39,7 @@ export default function Home() {
          
           <Header />
 
-          <Centerblock playlist={tracks}/>
+          <Centerblock key="favorite-playlist" playlist={tracks} title={"Любимые треки"}/>
 
           <Sidebar />
 

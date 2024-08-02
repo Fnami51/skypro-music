@@ -8,6 +8,10 @@ export  function addFavotite(access: string, id: number, refresh: string) {
         },
       })
         .then((response) => {
+          if (response.status === 404) {
+            alert("Простите трек не найден")
+            throw new Error ("Трек не найден")
+          }
             if (response.status === 401) {
               updateToken(refresh).then((data) => {
                 addFavotite(data.access, id, refresh)
@@ -25,6 +29,10 @@ export  function deleteFavotite(access: string, id: number, refresh: string) {
       },
     })
       .then((response) => {
+        if (response.status === 404) {
+          alert("Простите трек не найден")
+          throw new Error ("Трек не найден")
+        }
           if (response.status === 401) {
             updateToken(refresh).then((data) => {
               addFavotite(data.access, id, refresh)

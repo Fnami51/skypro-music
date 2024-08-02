@@ -11,41 +11,25 @@ import { useEffect, useState } from "react";
 import { addFavotite, deleteFavotite } from "../api/favoriteApi";
 import { setLike } from "@/store/features/favoriteSlice";
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-}
-
-interface Track {
-    id: number;
-    name: string;
-    author: string;
-    release_date: string;
-    genre: string;
-    duration_in_seconds: number;
-    logo: string;
-    track_file: string;
-    started_user: User[];
-}
+import {Track} from '@interface/tracksInterface';
 
 interface TrackProps {
   track: Track
   playlist: Track[]
 }
 
-export default function Track({track, playlist}: TrackProps) {
+export const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+}
+
+export default function Sound({track, playlist}: TrackProps) {
     const dispatch = useAppDispatch();
     const {/*playlist*/ currentTrack, isPlaying} = useAppSelector(state => state.playlist)
     const {isLiked, access, refresh, user} = useAppSelector(state => state.favorite)
-    const {id, name, author, release_date, genre, duration_in_seconds, logo, track_file, started_user} = track;
-    const formatDuration = (seconds: number) => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-    }
+    // const {track} = track;
+    
     const [trackDot, setTrackDot] = useState({isPulse: false, isSelect: false})
 
     function headleClick() {
@@ -60,10 +44,10 @@ export default function Track({track, playlist}: TrackProps) {
             return alert("Сначало войдите")
         }
         console.log(access)
-        addFavotite(access, id, refresh).then((result) => {
-            const updatedLikes = isLiked.includes(id) 
-                ? isLiked.filter(likeId => likeId !== id)
-                : [...isLiked, id];
+        addFavotite(access, track.id, refresh).then((result) => {
+            const updatedLikes = isLiked.includes(track.id) 
+                ? isLiked.filter(likeId => likeId !== track.id)
+                : [...isLiked, track.id];
             dispatch(setLike(updatedLikes));
             console.log(result)
         })
@@ -74,10 +58,10 @@ export default function Track({track, playlist}: TrackProps) {
             return alert("Сначало войдите")
         }
         console.log(access)
-        deleteFavotite(access, id, refresh).then((result) => {
-            const updatedLikes = isLiked.includes(id) 
-                ? isLiked.filter(likeId => likeId !== id)
-                : [...isLiked, id];
+        deleteFavotite(access, track.id, refresh).then((result) => {
+            const updatedLikes = isLiked.includes(track.id) 
+                ? isLiked.filter(likeId => likeId !== track.id)
+                : [...isLiked, track.id];
             dispatch(setLike(updatedLikes));
             console.log(result)
         })
@@ -85,7 +69,7 @@ export default function Track({track, playlist}: TrackProps) {
 
     useEffect(() => {
         if (currentTrack) {
-            if (currentTrack.id === id) {
+            if (currentTrack.id === track.id) {
                 setTrackDot(prevTrackDot => ({
                     ...prevTrackDot,
                     isSelect: true,
@@ -98,10 +82,10 @@ export default function Track({track, playlist}: TrackProps) {
                 }))
             }
         }
-    }, [currentTrack, id, isPlaying])
+    }, [currentTrack, track.id, isPlaying])
 
     function findLike() {
-        const foundId: number | undefined = isLiked.find(trackId => trackId === id);
+        const foundId: number | undefined = isLiked.find(trackId => trackId === track.id);
         if (foundId) {
             return true;
         } else {
@@ -125,14 +109,14 @@ export default function Track({track, playlist}: TrackProps) {
                         )}
                     </div>
                     <div>
-                        <span className={styles.titleLink}>{name} <span className={styles.titleSpan}></span></span>
+                        <span className={styles.titleLink}>{track.name} <span className={styles.titleSpan}></span></span>
                     </div>
                 </div>
                 <div className={classNames(styles.author, styles.column2)}>
-                    <a className={styles.authorLink} href="http://">{author}</a>
+                    <a className={styles.authorLink} href="http://">{track.author}</a>
                 </div>
                 <div className={styles.column3}>
-                    <a className={styles.albumLink} href="http://">{genre}</a>
+                    <a className={styles.albumLink} href="http://">{track.genre}</a>
                 </div>
                 <div className={styles.column4}>
                     
@@ -150,7 +134,7 @@ export default function Track({track, playlist}: TrackProps) {
                     </button>
                     )}
 
-                    <span className={styles.timeText}>{formatDuration(duration_in_seconds)}</span>
+                    <span className={styles.timeText}>{formatDuration(track.duration_in_seconds)}</span>
                 </div>
             </div>
         </div>

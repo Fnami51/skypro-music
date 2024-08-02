@@ -1,24 +1,6 @@
 import { createAsyncThunk, createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 
-interface User {
-    id: number;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-}
-
-interface Track {
-    id: number;
-    name: string;
-    author: string;
-    release_date: string;
-    genre: string;
-    duration_in_seconds: number;
-    logo: string;
-    track_file: string;
-    started_user: User[];
-}
+import {Track} from '@interface/tracksInterface';
 
 interface PlaylistState {
     playlist: Track[];
@@ -60,7 +42,7 @@ const playlistSlice = createSlice({
             state.isPlaying = true
             const playlist = state.isShuffle ? state.shuffledPlaylist : state.playlist;
             const currentIndex = playlist.findIndex(
-                (track) => track.id === state.currentTrack?.id
+                (track) => track.id === state.currentTrack?._id
             );
             if (currentIndex === playlist.length - 1) {return}
             const nextIndex = currentIndex + 1;
@@ -74,7 +56,7 @@ const playlistSlice = createSlice({
             state.isPlaying = true
             const playlist = state.isShuffle ? state.shuffledPlaylist : state.playlist;
             const currentIndex = playlist.findIndex(
-                (track) => track.id === state.currentTrack?.id
+                (track) => track.id === state.currentTrack?._id
             );
             if (!currentIndex) {return}
             const prevIndex = currentIndex - 1;

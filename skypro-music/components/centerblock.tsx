@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import styles from "./style_components/centerblock.module.css";
-import Track from "./track";
+import Sound from "./track";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { setPlaylist as setPlaylistAction } from "@/store/features/playlistSlice";
@@ -10,33 +10,16 @@ import { useAppDispatch, useAppSelector } from "@/store/store";
 import { updateToken } from "../api/token";
 import { setAccessToken } from "@/store/features/favoriteSlice";
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-}
-
-interface Track {
-  id: number;
-  name: string;
-  author: string;
-  release_date: string;
-  genre: string;
-  duration_in_seconds: number;
-  logo: string;
-  track_file: string;
-  started_user: User[];
-}
+import {Track} from '@interface/tracksInterface';
 
 interface CenterblockProps {
   playlist: Track[];
+  title: string;
 }
 
 type YearSortType = 'default' | 'new' | 'old';
 
-export default function Centerblock({ playlist }: CenterblockProps) {
+export default function Centerblock({ playlist, title }: CenterblockProps) {
   const dispatch = useAppDispatch();
   const { refresh, isFavoritePlaylist, access } = useAppSelector((state) => state.favorite);
   const { authors, genres } = useAppSelector((state) => state.filter);
@@ -148,7 +131,7 @@ export default function Centerblock({ playlist }: CenterblockProps) {
           onKeyDown={handleKeyDown}
         />
       </div>
-      <h2 className={styles.heading}>Треки</h2>
+      <h2 className={styles.heading}>{title}</h2>
       <div className={styles.filter}>
         <div className={styles.filterTitle}>Искать по:</div>
         <div>
@@ -280,7 +263,7 @@ export default function Centerblock({ playlist }: CenterblockProps) {
         </div>
         <div className={styles.playlist}>
           {filteredTracks.map(track => (
-            <Track key={track.id} track={track} playlist={playlist} />
+            <Sound key={`${track.id}+${Math.random()}`} track={track} playlist={playlist} />
           ))}
         </div>
       </div>

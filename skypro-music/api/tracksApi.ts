@@ -1,24 +1,6 @@
 import { updateToken } from "./token";
 
-interface User {
-    id: number;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-  }
-  
-  interface Track {
-    id: number;
-    name: string;
-    author: string;
-    release_date: string;
-    genre: string;
-    duration_in_seconds: number;
-    logo: string;
-    track_file: string;
-    started_user: User[];
-  }
+import {Track} from '@interface/tracksInterface';
 
 export async function getTracks(/*token: string*/): Promise<Track[]>{
     const result = await fetch('https://skypro-music-api.skyeng.tech/catalog/track/all/', {

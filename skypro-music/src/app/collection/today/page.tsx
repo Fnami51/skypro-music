@@ -7,25 +7,7 @@ import Sidebar from "../../../../components/sidebar";
 import Soundbar from "../../../../components/bar";
 import { getTracks } from "../../../../api/tracksApi";
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-}
-
-interface Track {
-  id: number;
-  name: string;
-  author: string;
-  release_date: string;
-  genre: string;
-  duration_in_seconds: number;
-  logo: string;
-  track_file: string;
-  started_user: User[];
-}
+import {Track} from '@interface/tracksInterface';
 
 export default async function Home() {
   async function requestInApi() {
@@ -45,7 +27,7 @@ export default async function Home() {
          
           <Header />
 
-          <Centerblock playlist={tracks.filter((track) => track.genre === "Классическая музыка")}/>
+          <Centerblock key="today-playlist" playlist={tracks.filter((track) => track.genre === "Классическая музыка")} title={"Хит-дня"}/>
 
           <Sidebar />
 
