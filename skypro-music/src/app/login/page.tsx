@@ -97,6 +97,7 @@ export default function Home() {
                 }}
                 required
               />
+              {errors.email && <div className={loginStyle.errorText}>{errors.email}</div>}
             </div>
             <div className={loginStyle.inputWrapper}>
               <input 
@@ -112,6 +113,7 @@ export default function Home() {
                 }}
                 required
               />
+              {errors.password && <div className={loginStyle.errorText}>{errors.password}</div>}
             </div>
             <button 
               className={classNames(loginStyle.button, loginStyle.loginBtn)} 

@@ -65,3 +65,16 @@
 .input.error {
     border-color: red;
   }
+
+  .errorText {
+    color: red;
+    background-color: white;
+    border: red solid 0.5px;
+    border-radius: 16px;
+    position: absolute;
+    padding: 5px;
+    font-weight: 300;
+    font-size: 16px;
+    margin-top: 5px;
+    max-width: 278px;
+}

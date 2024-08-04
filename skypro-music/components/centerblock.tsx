@@ -5,10 +5,6 @@ import styles from "./style_components/centerblock.module.css";
 import Sound from "./track";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { setPlaylist as setPlaylistAction } from "@/store/features/playlistSlice";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { updateToken } from "../api/token";
-import { setAccessToken } from "@/store/features/favoriteSlice";
 
 import {Track} from '@interface/tracksInterface';
 
@@ -20,15 +16,14 @@ interface CenterblockProps {
 type YearSortType = 'default' | 'new' | 'old';
 
 export default function Centerblock({ playlist, title }: CenterblockProps) {
-  const dispatch = useAppDispatch();
-  const { refresh, isFavoritePlaylist, access } = useAppSelector((state) => state.favorite);
-  const { authors, genres } = useAppSelector((state) => state.filter);
   const [filter, setFilter] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredTracks, setFilteredTracks] = useState<Track[]>(playlist);
   const [selectedAuthors, setSelectedAuthors] = useState<Set<string>>(new Set());
   const [selectedGenres, setSelectedGenres] = useState<Set<string>>(new Set());
   const [yearSort, setYearSort] = useState<YearSortType>('default'); 
+
+  console.log("Tracks in Centerblocks", playlist)
 
   const filteredAuthors: string[] = playlist
     .map(track => track.author)
@@ -140,7 +135,7 @@ export default function Centerblock({ playlist, title }: CenterblockProps) {
           </button>
           <div className={styles.filterSelections} style={{ display: filter === 1 ? 'flex' : 'none' }}>
             {filteredAuthors.map(author => (
-              <div key={author}>
+              <div key={`${author}${Math.random()}`}>
                 <input
                   type="checkbox"
                   name="author-select"
@@ -167,7 +162,7 @@ export default function Centerblock({ playlist, title }: CenterblockProps) {
           </button>
           <div className={styles.filterSelections} style={{ display: filter === 3 ? 'flex' : 'none' }}>
             {filteredGenres.map(genre => (
-              <div key={genre}>
+              <div key={`${genre}${Math.random()}`}>
                 <input
                   type="checkbox"
                   name="genre-select"

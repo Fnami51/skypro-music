@@ -34,7 +34,7 @@ export default async function Home() {
         </main>
 
 
-        <Soundbar />
+        {/* <Soundbar /> */}
 
 
         <footer className="footer"></footer>
