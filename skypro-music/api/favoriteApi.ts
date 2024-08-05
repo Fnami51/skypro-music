@@ -1,7 +1,8 @@
+import { url } from "./configURLforAPi"
 import { updateToken } from "./token"
 
 export  function addFavotite(access: string, id: number, refresh: string) {
-    return fetch("https://webdev-music-003b5b991590.herokuapp.com/catalog/track/"+id+"/favorite/", {
+    return fetch(url+"/catalog/track/"+id+"/favorite/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${access}`,
@@ -26,7 +27,7 @@ export  function addFavotite(access: string, id: number, refresh: string) {
 }
 
 export  function deleteFavotite(access: string, id: number, refresh: string) {
-  return fetch("https://webdev-music-003b5b991590.herokuapp.com/catalog/track/"+id+"/favorite/", {
+  return fetch(url+"/catalog/track/"+id+"/favorite/", {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${access}`,

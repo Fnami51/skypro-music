@@ -1,9 +1,10 @@
+import { url } from "./configURLforAPi";
 import { updateToken } from "./token";
 
 import {Track} from '@interface/tracksInterface';
 
 export async function getTracks(/*token: string*/): Promise<Track[]>{
-    const result = await fetch('https://skypro-music-api.skyeng.tech/catalog/track/all/', {
+    const result = await fetch(url+'/catalog/track/all/', {
         method: "GET",
         /*headers: {
             Authorization: `Bearer ${key}`,
@@ -16,7 +17,7 @@ export async function getTracks(/*token: string*/): Promise<Track[]>{
 }
 
 export async function fetchFavoriteTracks(access: string, refresh: string){
-    const result = await fetch('https://webdev-music-003b5b991590.herokuapp.com/catalog/track/favorite/all/', {
+    const result = await fetch(url+'/catalog/track/favorite/all/', {
         method: "GET",
         headers: {
             Authorization: `Bearer ${access}`,

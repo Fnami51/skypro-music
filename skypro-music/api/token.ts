@@ -1,5 +1,7 @@
+import { url } from "./configURLforAPi"
+
 export function updateToken(refresh: string | null) {
-    return fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
+    return fetch(url+'/user/token/refresh/', {
         method: "POST",
         body: JSON.stringify({
             refresh,
@@ -16,7 +18,7 @@ export function updateToken(refresh: string | null) {
 }
 
 export function getToken(email: string, password: string) {
-    return fetch("https://webdev-music-003b5b991590.herokuapp.com/user/token/", {
+    return fetch(url+"/user/token/", {
         method: "POST",
         body: JSON.stringify({
           email,
