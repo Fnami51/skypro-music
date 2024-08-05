@@ -27,8 +27,8 @@ export default function Home() {
     } else {
     fetchFavoriteTracks(access, refresh)
     .then((answerFromApi) => {
-      console.log(answerFromApi.data); // отладка
-      dispatch(setPlaylist(answerFromApi.data));
+      console.log(answerFromApi); // отладка
+      dispatch(setPlaylist(answerFromApi));
     })
     .catch((error) => {
       console.error("Error fetching favorite tracks:", error);

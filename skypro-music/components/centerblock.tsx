@@ -4,9 +4,9 @@ import Image from "next/image";
 import styles from "./style_components/centerblock.module.css";
 import Sound from "./track";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
-import {Track} from '@interface/tracksInterface';
+import { Track } from '@interface/tracksInterface';
 
 interface CenterblockProps {
   playlist: Track[];
@@ -18,30 +18,31 @@ type YearSortType = 'default' | 'new' | 'old';
 export default function Centerblock({ playlist, title }: CenterblockProps) {
   const [filter, setFilter] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredTracks, setFilteredTracks] = useState<Track[]>(playlist);
   const [selectedAuthors, setSelectedAuthors] = useState<Set<string>>(new Set());
   const [selectedGenres, setSelectedGenres] = useState<Set<string>>(new Set());
-  const [yearSort, setYearSort] = useState<YearSortType>('default'); 
+  const [yearSort, setYearSort] = useState<YearSortType>('default');
 
-  console.log("Tracks in Centerblocks", playlist)
+  console.log("Tracks in Centerblocks", playlist);
 
-  const filteredAuthors: string[] = playlist
-    .map(track => track.author)
-    .filter((value, index, self) => self.indexOf(value) === index);
+  // Проверка перед использованием `map` для избежания ошибок, если `playlist` пустой или не существует
+  const filteredAuthors: string[] = useMemo(() => {
+    if (!playlist || playlist.length === 0) return [];
+    return playlist
+      .map(track => track.author)
+      .filter((value, index, self) => self.indexOf(value) === index);
+  }, [playlist]);
 
-  const filteredGenres: string[] = playlist
-    .map(track => track.genre)
-    .filter((value, index, self) => self.indexOf(value) === index);
+  // Используем useMemo для мемоизации вычислений фильтра авторов
+  const filteredGenres: string[] = useMemo(() => {
+    if (!playlist || playlist.length === 0) return [];
+    return playlist
+      .map(track => track.genre)
+      .filter((value, index, self) => self.indexOf(value) === index);
+  }, [playlist]);
 
   function selectFilter(filterNumber: number) {
     setFilter(filter !== filterNumber ? filterNumber : 0);
   }
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      filterTracks();
-    }
-  };
 
   function searchTracksByName(partOfName: string, tracks: Track[]): Track[] {
     const lowerCasePart = partOfName.toLowerCase();
@@ -50,7 +51,8 @@ export default function Centerblock({ playlist, title }: CenterblockProps) {
     );
   }
 
-  function filterTracks() {
+  // Используем useMemo для мемоизации фильтрованных треков
+  const filteredTracks = useMemo(() => {
     let newFilteredTracks = playlist;
 
     if (searchQuery) {
@@ -75,8 +77,8 @@ export default function Centerblock({ playlist, title }: CenterblockProps) {
       );
     }
 
-    setFilteredTracks(newFilteredTracks);
-  }
+    return newFilteredTracks;
+  }, [playlist, searchQuery, selectedAuthors, selectedGenres, yearSort]);
 
   const toggleAuthor = (author: string) => {
     setSelectedAuthors(prev => {
@@ -106,9 +108,8 @@ export default function Centerblock({ playlist, title }: CenterblockProps) {
     setYearSort(sortType);
   };
 
-  useEffect(() => {
-    filterTracks();
-  }, [searchQuery, selectedAuthors, selectedGenres, yearSort]);
+  // Удалено использование useEffect для вызова filterTracks, так как он теперь мемоизирован
+  // и пересчитывается только при изменении зависимостей
 
   return (
     <div className={styles.background}>
@@ -123,7 +124,6 @@ export default function Centerblock({ playlist, title }: CenterblockProps) {
           name="search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
         />
       </div>
       <h2 className={styles.heading}>{title}</h2>
@@ -135,7 +135,7 @@ export default function Centerblock({ playlist, title }: CenterblockProps) {
           </button>
           <div className={styles.filterSelections} style={{ display: filter === 1 ? 'flex' : 'none' }}>
             {filteredAuthors.map(author => (
-              <div key={`${author}${Math.random()}`}>
+              <div key={author}>
                 <input
                   type="checkbox"
                   name="author-select"
@@ -162,7 +162,7 @@ export default function Centerblock({ playlist, title }: CenterblockProps) {
           </button>
           <div className={styles.filterSelections} style={{ display: filter === 3 ? 'flex' : 'none' }}>
             {filteredGenres.map(genre => (
-              <div key={`${genre}${Math.random()}`}>
+              <div key={genre}>
                 <input
                   type="checkbox"
                   name="genre-select"
@@ -258,7 +258,7 @@ export default function Centerblock({ playlist, title }: CenterblockProps) {
         </div>
         <div className={styles.playlist}>
           {filteredTracks.map(track => (
-            <Sound key={`${track.id}+${Math.random()}`} track={track} playlist={playlist} />
+            <Sound key={track.id} track={track} playlist={playlist} />
           ))}
         </div>
       </div>

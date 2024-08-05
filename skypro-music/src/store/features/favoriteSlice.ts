@@ -32,7 +32,7 @@ const initialState: PlaylistState = {
 export const getFavotiteTracks = createAsyncThunk('favorite/getFavotiteTracks', 
     async(tokens: {access: string, refresh: string}) => {
         const favoriteTrack = await fetchFavoriteTracks(tokens.access, tokens.refresh)
-        return favoriteTrack.data
+        return favoriteTrack
     }
 )
 
