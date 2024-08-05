@@ -1,11 +1,8 @@
 import Image from "next/image"
 import styles from "./style_components/sidebar.module.css"
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { getFirstSet, getSecondSet, getThirdSet } from "@/store/features/filterSlice";
 import Link from "next/link";
 
 export default function Collections() {
-  const dispatch = useAppDispatch();
 // Сделать ссылками на страницу колекций и там фильтровать 
 
     return (

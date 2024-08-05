@@ -22,6 +22,23 @@ interface Token {
   access: string;
   refresh: string;
 }
+export function validate(email: string, password: string) {
+  const newErrors: { email?: string; password?: string } = {};
+
+  if (!email) {
+    newErrors.email = "Почта обязательна";
+  } else if (!/\S+@\S+\.\S+/.test(email)) {
+    newErrors.email = "Неверный формат почты";
+  }
+
+  if (!password) {
+    newErrors.password = "Пароль обязателен";
+  } else if (password.length < 8) {
+    newErrors.password = "Пароль должен содержать минимум 8 символов";
+  }
+
+  return newErrors;
+};
 
 export default function Home() {
   const navigate = useRouter();
@@ -32,26 +49,10 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
-  const validate = () => {
-    const newErrors: { email?: string; password?: string } = {};
-
-    if (!email) {
-      newErrors.email = "Почта обязательна";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Неверный формат почты";
-    }
-
-    if (!password) {
-      newErrors.password = "Пароль обязателен";
-    } else if (password.length < 6) {
-      newErrors.password = "Пароль должен содержать минимум 6 символов";
-    }
-
-    return newErrors;
-  };
+  
 
   async function handleClick() {
-    const validationErrors = validate();
+    const validationErrors = validate(email, password);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
