@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Collections from "./sets";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { setUser } from "@/store/features/favoriteSlice";
+import { setAccessToken, setFavoritePlaylist, setRefreshToken, setUser } from "@/store/features/favoriteSlice";
 import { useInitialLikeTracks } from "@/hooks/useInitialLikeTracks";
 
 export default function Sidebar() {
@@ -18,6 +18,9 @@ export default function Sidebar() {
 
   function goToExit() {
     dispatch(setUser({_id: 0, email: "", username: ""}))
+    dispatch(setAccessToken(""))
+    dispatch(setRefreshToken(""))
+    dispatch(setFavoritePlaylist(false))
     navigate.push('/login')
   }
 
