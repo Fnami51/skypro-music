@@ -248,6 +248,7 @@ function findLike(id: number) {
                 </div>
                 <div className={classNames(styles.volProgress, styles.btn)}>
                   <input
+                    id="volume"
                     className={classNames(styles.volProgress, styles.btn)}
                     type="range"
                     name="range"

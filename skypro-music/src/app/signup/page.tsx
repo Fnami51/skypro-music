@@ -107,6 +107,7 @@ export default function Home() {
                 }}
                 required
               />
+              {errors.email && <div className={signupStyle.errorText}>{errors.email}</div>}
             </div>
             <div className={signupStyle.inputWrapper}>
               <input 
@@ -123,6 +124,7 @@ export default function Home() {
                 }}
                 required
               />
+              {errors.password && <div className={signupStyle.errorText}>{errors.password}</div>}
             </div>
             <div className={signupStyle.inputWrapper}>
               <input 
@@ -139,6 +141,7 @@ export default function Home() {
                 }}
                 required
               />
+              {errors.verification && <div className={signupStyle.errorText}>{errors.verification}</div>}
             </div>
             <button 
               className={classNames(signupStyle.button, signupStyle.registrBtn)} 
