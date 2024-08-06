@@ -1,38 +1,35 @@
-export function updateToken(refresh: string) {
-    fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
+import { url } from "./configURLforAPi"
+
+export function updateToken(refresh: string | null) {
+    return fetch(url+'/user/token/refresh/', {
         method: "POST",
         body: JSON.stringify({
-            refresh: refresh,
+            refresh,
         }),
           headers: {
             "content-type": "application/json",
           },
     }).then((response) => {
-        if (response.ok) {
-            return response.json()
-            
-        } else {
-            console.error('Token error', response.status);
-        };
-    }).then((data) => {
-        return data.access;
-    });
+      if (response.status === 401) {
+          throw new Error ("Error auth")
+      }
+      return response.json()
+  })
 }
 
-export async function getToken(email: string, password: string) {
-    const result = await fetch('https://skypro-music-api.skyeng.tech/user/token/refresh/', {
+export function getToken(email: string, password: string) {
+    return fetch(url+"/user/token/", {
         method: "POST",
         body: JSON.stringify({
-            email: email,
-            password: password,
+          email,
+          password,
         }),
-          headers: {
-            "content-type": "application/json",
-          },
-    });
-    if (!result.ok) {
-        console.error('Token error', result.status);
-    };
-    const data = result.json()
-    return data;
-}
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (response.status === 401) {
+              throw new Error ("Error auth")
+          }
+          return response.json()})}

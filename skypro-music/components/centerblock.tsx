@@ -1,69 +1,115 @@
 'use client';
 
-import Image from "next/image"
-import styles from "./style_components/centerblock.module.css"
-import Track from "./track"
-import classNames from "classnames"
-import { getTracks } from "../api/tracksApi";
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import styles from "./style_components/centerblock.module.css";
+import Sound from "./track";
+import classNames from "classnames";
+import { useEffect, useState, useMemo } from "react";
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
+import { Track } from '@interface/tracksInterface';
+
+interface CenterblockProps {
+  playlist: Track[];
+  title: string;
 }
 
-interface Track {
-  id: number;
-  name: string;
-  author: string;
-  release_date: string;
-  genre: string;
-  duration_in_seconds: number;
-  logo: string;
-  track_file: string;
-  started_user: User[];
-}
+type YearSortType = 'default' | 'new' | 'old';
 
-export default function Centerblock() {
-  const [tracks, setTracks] = useState<Track[]>([])
-  const [filter, setFilter] = useState<number>(0)
+export default function Centerblock({ playlist, title }: CenterblockProps) {
+  const [filter, setFilter] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedAuthors, setSelectedAuthors] = useState<Set<string>>(new Set());
+  const [selectedGenres, setSelectedGenres] = useState<Set<string>>(new Set());
+  const [yearSort, setYearSort] = useState<YearSortType>('default');
 
-  useEffect(() => {
-    async function requestInApi() {
-      // сonst token: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxOTU3NDU4NywiaWF0IjoxNzE5NDg4MTg3LCJqdGkiOiI0M2JiNTNmZWViZmI0NGQwOWRmMzM3YWFiNzUzYjMxNyIsInVzZXJfaWQiOjQxMDJ9.XORoN0mHybvru7KwGzb5mBrl6IVtFlzDaYe7byys4T0";
-      
-      const answerFromApi: Track[] = await getTracks(/*token*/);
+  console.log("Tracks in Centerblocks", playlist);
 
-      console.log(answerFromApi)
+  // Проверка перед использованием `map` для избежания ошибок, если `playlist` пустой или не существует
+  const filteredAuthors: string[] = useMemo(() => {
+    if (!playlist || playlist.length === 0) return [];
+    return playlist
+      .map(track => track.author)
+      .filter((value, index, self) => self.indexOf(value) === index);
+  }, [playlist]);
 
-      setTracks(answerFromApi);
-    }
-
-    requestInApi();
-  }, [])
-
-  const filteredAuthors: string[] = tracks
-  .map(track => track.author)
-  .filter((value, index, self) => {
-    return self.indexOf(value) === index;
-  });
-
-  const filteredGenres: string[] = tracks
-  .map(track => track.genre)
-  .filter((value, index, self) => {
-    return self.indexOf(value) === index;
-  });
+  // Используем useMemo для мемоизации вычислений фильтра авторов
+  const filteredGenres: string[] = useMemo(() => {
+    if (!playlist || playlist.length === 0) return [];
+    return playlist
+      .map(track => track.genre)
+      .filter((value, index, self) => self.indexOf(value) === index);
+  }, [playlist]);
 
   function selectFilter(filterNumber: number) {
-    if (filter !== filterNumber) {
-      setFilter(filterNumber)
-    } else if (filter === filterNumber) {
-      setFilter(0)
+    setFilter(filter !== filterNumber ? filterNumber : 0);
+  }
+
+  function searchTracksByName(partOfName: string, tracks: Track[]): Track[] {
+    const lowerCasePart = partOfName.toLowerCase();
+    return tracks.filter(track =>
+      track.name.toLowerCase().includes(lowerCasePart)
+    );
+  }
+
+  // Используем useMemo для мемоизации фильтрованных треков
+  const filteredTracks = useMemo(() => {
+    let newFilteredTracks = playlist;
+
+    if (searchQuery) {
+      newFilteredTracks = searchTracksByName(searchQuery, newFilteredTracks);
     }
-  } 
+
+    if (selectedAuthors.size > 0) {
+      newFilteredTracks = newFilteredTracks.filter(track => selectedAuthors.has(track.author));
+    }
+
+    if (selectedGenres.size > 0) {
+      newFilteredTracks = newFilteredTracks.filter(track => selectedGenres.has(track.genre));
+    }
+
+    if (yearSort === 'new') {
+      newFilteredTracks = [...newFilteredTracks].sort((a, b) =>
+        new Date(b.release_date).getTime() - new Date(a.release_date).getTime()
+      );
+    } else if (yearSort === 'old') {
+      newFilteredTracks = [...newFilteredTracks].sort((a, b) =>
+        new Date(a.release_date).getTime() - new Date(b.release_date).getTime()
+      );
+    }
+
+    return newFilteredTracks;
+  }, [playlist, searchQuery, selectedAuthors, selectedGenres, yearSort]);
+
+  const toggleAuthor = (author: string) => {
+    setSelectedAuthors(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(author)) {
+        newSet.delete(author);
+      } else {
+        newSet.add(author);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleGenre = (genre: string) => {
+    setSelectedGenres(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(genre)) {
+        newSet.delete(genre);
+      } else {
+        newSet.add(genre);
+      }
+      return newSet;
+    });
+  };
+
+  const handleYearSortChange = (sortType: YearSortType) => {
+    setYearSort(sortType);
+  };
+
+  // Удалено использование useEffect для вызова filterTracks, так как он теперь мемоизирован
+  // и пересчитывается только при изменении зависимостей
 
   return (
     <div className={styles.background}>
@@ -76,9 +122,11 @@ export default function Centerblock() {
           type="search"
           placeholder="Поиск"
           name="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-      <h2 className={styles.heading}>Треки</h2>
+      <h2 className={styles.heading}>{title}</h2>
       <div className={styles.filter}>
         <div className={styles.filterTitle}>Искать по:</div>
         <div>
@@ -86,35 +134,26 @@ export default function Centerblock() {
             исполнителю
           </button>
           <div className={styles.filterSelections} style={{ display: filter === 1 ? 'flex' : 'none' }}>
-            {
-              filteredAuthors.map(author => (
-                <div key={author}>
-                <input type="checkbox" name="author-select" id={author} className={styles.selectInput} />
-                <label htmlFor={author} className={styles.selectLabel}>
+            {filteredAuthors.map(author => (
+              <div key={author}>
+                <input
+                  type="checkbox"
+                  name="author-select"
+                  id={author}
+                  className={styles.selectInput}
+                  checked={selectedAuthors.has(author)}
+                  onChange={() => toggleAuthor(author)}
+                />
+                <label
+                  htmlFor={author}
+                  className={classNames(styles.selectLabel, {
+                    [styles.selectedLabel]: selectedAuthors.has(author)
+                  })}
+                >
                   {author}
                 </label>
-                </div>
-              ))
-            }
-          </div>
-        </div>
-        <div>
-          <button className={classNames(styles.filterBtn, styles.btnText)} onClick={() => selectFilter(2)}>
-            году выпуска
-          </button>
-          <div className={styles.filterSelectionYear} style={{ display: filter === 2 ? 'flex' : 'none' }}>
-            <input type="checkbox" name="year-select" id="defaultYearSelect" className={styles.selectInput}/>
-            <label htmlFor="defaultYearSelect" className={styles.selectLabel}>
-              По умолчанию
-            </label>
-            <input type="checkbox" name="year-select" id="newYearSelect" className={styles.selectInput}/>
-            <label htmlFor="newYearSelect" className={styles.selectLabel}>
-              Сначало новые
-            </label>
-            <input type="checkbox" name="year-select" id="oldYearSelect" className={styles.selectInput}/>
-            <label htmlFor="oldYearSelect" className={styles.selectLabel}>
-              Сначало старые
-            </label>
+              </div>
+            ))}
           </div>
         </div>
         <div>
@@ -122,16 +161,87 @@ export default function Centerblock() {
             жанру
           </button>
           <div className={styles.filterSelections} style={{ display: filter === 3 ? 'flex' : 'none' }}>
-            {
-              filteredGenres.map(genre => (
-                <div key={genre}>
-                <input type="checkbox" name="author-select" id={genre} className={styles.selectInput} />
-                <label htmlFor={genre} className={styles.selectLabel}>
+            {filteredGenres.map(genre => (
+              <div key={genre}>
+                <input
+                  type="checkbox"
+                  name="genre-select"
+                  id={genre}
+                  className={styles.selectInput}
+                  checked={selectedGenres.has(genre)}
+                  onChange={() => toggleGenre(genre)}
+                />
+                <label
+                  htmlFor={genre}
+                  className={classNames(styles.selectLabel, {
+                    [styles.selectedLabel]: selectedGenres.has(genre)
+                  })}
+                >
                   {genre}
                 </label>
-                </div>
-              ))
-            }
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <button className={classNames(styles.filterBtn, styles.btnText)} onClick={() => selectFilter(2)}>
+            году выпуска
+          </button>
+          <div className={styles.filterSelectionYear} style={{ display: filter === 2 ? 'flex' : 'none' }}>
+            <div>
+              <input
+                type="radio"
+                name="year-select"
+                id="defaultYearSelect"
+                className={styles.selectInput}
+                checked={yearSort === 'default'}
+                onChange={() => handleYearSortChange('default')}
+              />
+              <label
+                htmlFor="defaultYearSelect"
+                className={classNames(styles.selectLabel, {
+                  [styles.selectedLabel]: yearSort === 'default'
+                })}
+              >
+                По умолчанию
+              </label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="year-select"
+                id="newYearSelect"
+                className={styles.selectInput}
+                checked={yearSort === 'new'}
+                onChange={() => handleYearSortChange('new')}
+              />
+              <label
+                htmlFor="newYearSelect"
+                className={classNames(styles.selectLabel, {
+                  [styles.selectedLabel]: yearSort === 'new'
+                })}
+              >
+                Сначала новые
+              </label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="year-select"
+                id="oldYearSelect"
+                className={styles.selectInput}
+                checked={yearSort === 'old'}
+                onChange={() => handleYearSortChange('old')}
+              />
+              <label
+                htmlFor="oldYearSelect"
+                className={classNames(styles.selectLabel, {
+                  [styles.selectedLabel]: yearSort === 'old'
+                })}
+              >
+                Сначала старые
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -147,11 +257,11 @@ export default function Centerblock() {
           </div>
         </div>
         <div className={styles.playlist}>
-          {tracks.map(track => (
-            <Track key={track.id} {...track} />
+          {filteredTracks.map(track => (
+            <Sound key={track.id} track={track} playlist={playlist} />
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

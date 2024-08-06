@@ -1,11 +1,11 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 
-import Header from "../../components/header";
-import Centerblock from "../../components/centerblock";
-import Sidebar from "../../components/sidebar";
-import Soundbar from "../../components/bar";
-import { getTracks } from "../../api/tracksApi";
+import Header from "../../../../components/header";
+import Centerblock from "../../../../components/centerblock";
+import Sidebar from "../../../../components/sidebar";
+import Soundbar from "../../../../components/bar";
+import { getTracks } from "../../../../api/tracksApi";
 
 import {Track} from '@interface/tracksInterface';
 
@@ -27,7 +27,7 @@ export default async function Home() {
          
           <Header />
 
-          <Centerblock key="main-playlist" playlist={tracks} title={"Треки"}/>
+          <Centerblock key="indi-power-playlist" playlist={tracks.filter((track) => track.genre === "Рок музыка")} title={"Инди-заряд"}/>
 
           <Sidebar />
 

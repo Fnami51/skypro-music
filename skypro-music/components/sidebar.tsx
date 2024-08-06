@@ -1,54 +1,38 @@
+"use client";
+
 import Image from "next/image"
 import styles from "./style_components/sidebar.module.css"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Collections from "./sets";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setUser } from "@/store/features/favoriteSlice";
+import { useInitialLikeTracks } from "@/hooks/useInitialLikeTracks";
 
 export default function Sidebar() {
+  const navigate = useRouter()
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.favorite);
+
+  useInitialLikeTracks()
+
+  function goToExit() {
+    dispatch(setUser({_id: 0, email: "", username: ""}))
+    navigate.push('/login')
+  }
+
     return (
         <div className={styles.background}>
             <div className={styles.user}>
-              <p className={styles.userName}>Sergey.Ivanov</p>
-              <div className={styles.icon}>
+              <p className={styles.userName}>{user.username}</p>
+              <button className={styles.icon} onClick={goToExit}>
                 <svg>
                   <use xlinkHref="img/icon/sprite.svg#logout"></use>
                 </svg>
-              </div>
+              </button>
             </div>
-            <div className={styles.block}>
-              <div className={styles.list}>
-                <div className={styles.item}>
-                  <a className={styles.link} href="#">
-                    <Image
-                      className={styles.img}
-                      src="/img/playlist01.png"
-                      alt="day's playlist"
-                      width={250}
-                      height={150}
-                    />
-                  </a>
-                </div>
-                <div className={styles.item}>
-                  <a className={styles.link} href="#">
-                    <Image
-                      className={styles.img}
-                      src="/img/playlist02.png"
-                      alt="day's playlist"
-                      width={250}
-                      height={150}
-                    />
-                  </a>
-                </div>
-                <div className={styles.item}>
-                  <a className={styles.link} href="#">
-                    <Image
-                      className={styles.img}
-                      src="/img/playlist03.png"
-                      alt="day's playlist"
-                      width={250}
-                      height={150}
-                    />
-                  </a>
-                </div>
-              </div>
-            </div>
+            
+            <Collections />
           </div>
     )
 }

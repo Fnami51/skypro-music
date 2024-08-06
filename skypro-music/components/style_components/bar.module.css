@@ -16,12 +16,6 @@
     flex-direction: column;
 }
 
-.progress {
-    width: 100%;
-    height: 5px;
-    background: #2e2e2e;
-}
-
 .block {
     height: 73px;
     display: -webkit-box;
@@ -52,6 +46,7 @@
     justify-content: flex-start;
 }
 
+
 .controls {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -75,6 +70,8 @@
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  border:none;
+  background-color: transparent;
 }
 
   .btnPrev {
@@ -154,6 +151,11 @@
     cursor: pointer;
   }
 
+  .btnActive {
+    fill: #fff;
+    stroke: #ffffff;
+  }
+
   /*TrackPlay*/
 
 .trackPlay{
@@ -209,7 +211,6 @@
     grid-row: 1;
     grid-column: 2;
     grid-area: author;
-    min-width: 49px;
 }
 
 .authorLink{
@@ -254,6 +255,8 @@
 
 .like{
     padding: 5px;
+    background-color: transparent;
+    border: none;
 }
 
 .likeSvg{
@@ -263,27 +266,15 @@
     stroke: #696969;
 }
 
-.dislike{
-    padding: 5px;
-    margin-left: 28.5px;
-}
-
-.dislikeSvg{
-    width: 14.34px;
-    height: 13px;
-    fill: transparent;
-    stroke: #696969;
+.activeLike{
+  fill: #B672FF;
+  stroke: #B672FF;
 }
 
 /*Volume*/
 
 .volume{
-    width: auto;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
     align-items: center;
     padding: 0 92px 0 0;
 }
