@@ -1,4 +1,3 @@
-// validation.test.ts
 import { validate } from '../app/login/page';
 
 describe('Функция валидации', () => {
